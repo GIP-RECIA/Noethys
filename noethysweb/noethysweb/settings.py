@@ -3,7 +3,6 @@
 #  Distribué sous licence GNU GPL.
 
 import os
-import crispy_forms
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -50,13 +49,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 AUTH_USER_MODEL = 'core.Utilisateur'
 DUREE_VALIDITE_MDP = 60*60*168
 CORRECTEUR_JOURS_RETROACTION = 30
-PURGE_HISTORIQUE_JOURS = 365
-ATTRIBUTION_TARIF_FRATERIE_AINES = True
+PURGE_HISTORIQUE_JOURS = None
 
 # CONFIGURATION ACCUEIL
 CONFIG_ACCUEIL_DEFAUT = [
     [[6, "citation", "anniversaires"], [6, "celebrations", "anniversaires_demain"]],
-    [[8, "notes", "taches", "suivi_consommations", "suivi_inscriptions", "suivi_reservations"], [4, "graphe_individus", "messages", "astuce"]],
+    [[8, "notes", "taches", "suivi_consommations", "suivi_inscriptions"], [4, "graphe_individus", "messages", "astuce"]],
 ]
 
 # Application definition
@@ -103,9 +101,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
 ]
 
-# Ajout de crispy_bootstrap4 si version de crispy forms > 2
-if int(crispy_forms.__version__.split(".")[0]) >= 2:
-    INSTALLED_APPS.append("crispy_bootstrap4")
+# import crispy_forms
+# if int(crispy_forms.__version__.split(".")[0]) >= 2:
+#     INSTALLED_APPS.append("crispy_bootstrap4")
 
 # Liste des plugins
 PLUGINS = []
@@ -157,7 +155,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -196,6 +193,7 @@ LOCALE_PATHS = (
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+<<<<<<< HEAD
 # Stockage
 STORAGE_PROBLEME = "django.core.files.storage.FileSystemStorage"
 STORAGE_PIECE = "django.core.files.storage.FileSystemStorage"
@@ -203,6 +201,8 @@ STORAGE_QUOTIENT = "django.core.files.storage.FileSystemStorage"
 STORAGE_ASSURANCE = "django.core.files.storage.FileSystemStorage"
 STORAGE_PHOTO = "django.core.files.storage.FileSystemStorage"
 STORAGE_PIECE_COLLABORATEUR = "django.core.files.storage.FileSystemStorage"
+=======
+>>>>>>> a65221ac (Initial commit for main version)
 
 # Media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
