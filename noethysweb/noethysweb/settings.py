@@ -3,7 +3,6 @@
 #  Distribué sous licence GNU GPL.
 
 import os
-import crispy_forms
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,7 +27,7 @@ LOGIN_REDIRECT_URL = "accueil"
 # LOGOUT_REDIRECT_URL = "connexion"
 
 # AXES
-AXES_FAILURE_LIMIT = 5
+AXES_FAILURE_LIMIT = 24
 AXES_COOLOFF_TIME = 24
 AXES_LOCKOUT_URL = '/locked'
 
@@ -50,13 +49,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 AUTH_USER_MODEL = 'core.Utilisateur'
 DUREE_VALIDITE_MDP = 60*60*48
 CORRECTEUR_JOURS_RETROACTION = 30
-PURGE_HISTORIQUE_JOURS = 365
-ATTRIBUTION_TARIF_FRATERIE_AINES = True
+PURGE_HISTORIQUE_JOURS = None
 
 # CONFIGURATION ACCUEIL
 CONFIG_ACCUEIL_DEFAUT = [
     [[6, "citation", "anniversaires"], [6, "celebrations", "anniversaires_demain"]],
-    [[8, "notes", "taches", "suivi_consommations", "suivi_inscriptions", "suivi_reservations"], [4, "graphe_individus", "messages", "astuce"]],
+    [[8, "notes", "taches", "suivi_consommations", "suivi_inscriptions"], [4, "graphe_individus", "messages", "astuce"]],
 ]
 
 # Application definition
@@ -103,9 +101,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
 ]
 
-# Ajout de crispy_bootstrap4 si version de crispy forms > 2
-if int(crispy_forms.__version__.split(".")[0]) >= 2:
-    INSTALLED_APPS.append("crispy_bootstrap4")
+# import crispy_forms
+# if int(crispy_forms.__version__.split(".")[0]) >= 2:
+#     INSTALLED_APPS.append("crispy_bootstrap4")
 
 # Liste des plugins
 PLUGINS = []
@@ -129,7 +127,8 @@ MIDDLEWARE = [
     'axes.middleware.AxesMiddleware',
     'noethysweb.middleware.CustomMiddleware',
 ]
-
+# settings.py
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 ROOT_URLCONF = 'noethysweb.urls'
 
 TEMPLATES = [
@@ -156,11 +155,14 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'noethysB',
+        'USER': 'noethysB',
+        'PASSWORD': 'noethysB',
+        'HOST': 'localhost',  # ou l'adresse IP de votre serveur MariaDB
+        'PORT': '3306',       # le port par défaut de MariaDB
     }
 }
 
@@ -195,14 +197,6 @@ STATIC_URL = '/static/'
 # Media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-# Stockage
-STORAGE_PROBLEME = "django.core.files.storage.FileSystemStorage"
-STORAGE_PIECE = "django.core.files.storage.FileSystemStorage"
-STORAGE_QUOTIENT = "django.core.files.storage.FileSystemStorage"
-STORAGE_ASSURANCE = "django.core.files.storage.FileSystemStorage"
-STORAGE_PHOTO = "django.core.files.storage.FileSystemStorage"
-STORAGE_PIECE_COLLABORATEUR = "django.core.files.storage.FileSystemStorage"
 
 # Crispy forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
