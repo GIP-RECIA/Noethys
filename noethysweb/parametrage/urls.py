@@ -27,9 +27,7 @@ from parametrage.views import organisateur, structures, \
     types_qualifications_collaborateurs, types_pieces_collaborateurs, types_evenements_collaborateurs, types_postes_collaborateurs, \
     modeles_plannings_collaborateurs, groupes_collaborateurs, modeles_aides, transports, compagnies, lignes, lieux, arrets, modeles_impressions, \
     modeles_word, releves_bancaires, sondages, achats_categories, achats_fournisseurs, modeles_commandes, modeles_commandes_colonnes, \
-    activites_evenements_categories, gerer_compte_utilisateurs, activites_import_export
-
-
+    activites_evenements_categories, activites_import_export, gerer_compte_utilisateurs
 
 urlpatterns = [
 
