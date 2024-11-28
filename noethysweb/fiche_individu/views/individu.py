@@ -119,9 +119,17 @@ class Onglet(CustomView):
     objet_singulier = "un individu"
     liste_onglets = LISTE_ONGLETS
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self,**kwargs):
         context = super(Onglet, self).get_context_data(**kwargs)
         context['page_titre'] = "Fiche individuelle"
+        titulaire_rattachement = self.get_titulaire_rattachement()
+        compte_individu_active = self.request.session.get('compte_individu_active', False)
+        context['liste_onglets'] = \
+            [dict_onglet
+             for dict_onglet in self.liste_onglets
+             if self.request.user.has_perm("core.individu_%s" % dict_onglet["code"])
+             and (dict_onglet["code"] != "portail" or (compte_individu_active and titulaire_rattachement == 1))
+             ]
         context['liste_onglets'] = [dict_onglet for dict_onglet in self.liste_onglets if self.request.user.has_perm("core.individu_%s" % dict_onglet["code"])]
         context['idindividu'] = self.kwargs['idindividu']
         context['individu'] = Individu.objects.get(pk=self.kwargs['idindividu'])
@@ -152,7 +160,24 @@ class Onglet(CustomView):
         for rattachement in rattachements:
             rattachement.famille.Maj_infos()
 
+    def get_rattachement(self):
+        """Fetches the rattachement based on the individual ID and family ID"""
+        idindividu = self.Get_idindividu()
+        idfamille = self.Get_idfamille()
+        if idindividu and idfamille:
+            try:
+                return Rattachement.objects.select_related('individu', 'famille').get(
+                    individu_id=idindividu,
+                    famille_id=idfamille
+                )
+            except Rattachement.DoesNotExist:
+                return None
+        return None
 
+    def get_titulaire_rattachement(self):
+        """Fetches the categorie of the rattachement"""
+        rattachement = self.get_rattachement()
+        return rattachement.titulaire if rattachement else None
 
 class Resume(Onglet, DetailView):
     template_name = "fiche_individu/individu_resume.html"

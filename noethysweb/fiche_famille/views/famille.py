@@ -173,7 +173,12 @@ class Onglet(CustomView):
     def get_context_data(self, **kwargs):
         context = super(Onglet, self).get_context_data(**kwargs)
         context['page_titre'] = "Fiche famille"
-        context['liste_onglets'] = [dict_onglet for dict_onglet in self.liste_onglets if self.request.user.has_perm("core.famille_%s" % dict_onglet["code"])]
+        compte_famille_active = self.request.session.get('compte_famille_active', False)
+        context['liste_onglets'] = \
+            [dict_onglet for dict_onglet in self.liste_onglets
+             if self.request.user.has_perm("core.famille_%s" % dict_onglet["code"])
+             and (dict_onglet["code"] != "portail" or (compte_famille_active))
+             ]
         context['famille'] = Famille.objects.get(pk=self.kwargs['idfamille'])
         context['idfamille'] = self.kwargs['idfamille']
         context['categories'] = CATEGORIES_RATTACHEMENT

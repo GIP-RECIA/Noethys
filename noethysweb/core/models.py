@@ -3137,7 +3137,7 @@ class PortailPeriode(models.Model):
 
 class PortailParametre(models.Model):
     idparametre = models.AutoField(verbose_name="ID", db_column='IDparametre', primary_key=True)
-    code = models.CharField(verbose_name="Code", max_length=200, blank=True, null=True)
+    code = models.CharField(verbose_name="Code", max_length=200, blank=True, null=True, unique=True)
     valeur = models.TextField(verbose_name="Valeur", blank=True, null=True)
 
     class Meta:
