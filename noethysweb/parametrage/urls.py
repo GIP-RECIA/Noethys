@@ -27,7 +27,7 @@ from parametrage.views import organisateur, structures, \
     types_qualifications_collaborateurs, types_pieces_collaborateurs, types_evenements_collaborateurs, types_postes_collaborateurs, \
     modeles_plannings_collaborateurs, groupes_collaborateurs, modeles_aides, transports, compagnies, lignes, lieux, arrets, modeles_impressions, \
     modeles_word, releves_bancaires, sondages, achats_categories, achats_fournisseurs, modeles_commandes, modeles_commandes_colonnes, \
-    activites_evenements_categories
+    activites_evenements_categories, gerer_compte_utilisateurs
 
 
 urlpatterns = [
@@ -38,7 +38,8 @@ urlpatterns = [
     # Organisateur
     path('parametrage/organisateur/ajouter', organisateur.Ajouter.as_view(), name='organisateur_ajouter'),
     path('parametrage/organisateur/modifier/<int:pk>', organisateur.Modifier.as_view(), name='organisateur_modifier'),
-
+    # Compte
+    path('parametrage/compte/', gerer_compte_utilisateurs.Modifier.as_view(), name='gerer_compte_utilisateurs'),
     # Structures
     path('parametrage/structures/liste', structures.Liste.as_view(), name='structures_liste'),
     path('parametrage/structures/ajouter', structures.Ajouter.as_view(), name='structures_ajouter'),

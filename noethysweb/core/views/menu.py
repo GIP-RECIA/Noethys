@@ -24,6 +24,10 @@ def GetMenuPrincipal(organisateur=None, user=None):
         menu_structure.Add(code="organisateur_ajouter", titre="Organisateur", icone="file-text-o", compatible_demo=False)
     menu_structure.Add(code="structures_liste", titre="Structures", icone="file-text-o", compatible_demo=False)
 
+    # Compte
+    menu_compte = menu_parametrage.Add(titre="Compte")
+    menu_compte.Add(code="gerer_compte_utilisateurs", titre="Gérer les comptes Utilisateurs", icone="file-text-o")
+
     # Activités
     menu_activites = menu_parametrage.Add(titre="Activités")
     menu_activites.Add(code="types_groupes_activites_liste", titre="Groupes d'activités", icone="file-text-o")
