@@ -4,6 +4,9 @@
 #  Distribué sous licence GNU GPL.
 
 import logging, datetime, json
+
+from core.models import Famille
+
 logger = logging.getLogger(__name__)
 from django.urls import reverse_lazy
 from django.template.defaultfilters import truncatechars, striptags
@@ -20,18 +23,37 @@ class Page(CustomView):
     model = PortailMessage
     menu_code = "portail_contact"
 
+    def get_famille_object(self):
+        """Récupérer la famille de l'utilisateur, qu'il soit famille ou individu"""
+        if hasattr(self.request.user, 'famille'):
+            return self.request.user.famille
+        elif hasattr(self.request.user, 'individu'):
+            return Famille.objects.filter(nom__icontains=self.request.user.individu).first()
+
+        return None
+
     def get_context_data(self, **kwargs):
         context = super(Page, self).get_context_data(**kwargs)
         context['page_titre'] = _("Messagerie")
         context['structure'] = Structure.objects.get(pk=self.get_idstructure())
-        context['liste_messages'] = PortailMessage.objects.select_related("famille", "utilisateur").filter(famille=self.request.user.famille, structure_id=self.get_idstructure()).order_by("date_creation")
 
-        # Importation des messages non lus
-        liste_messages_non_lus = PortailMessage.objects.select_related("famille").filter(famille=self.request.user.famille, structure_id=self.get_idstructure(), utilisateur__isnull=False, date_lecture__isnull=True)
-        context['liste_messages_non_lus'] = list(liste_messages_non_lus)
+        # Récupérer la famille de l'utilisateur (famille ou individu)
+        famille = self.get_famille_object()
 
-        # Enregistre la date de lecture pour les messages non lus
-        liste_messages_non_lus.update(date_lecture=datetime.datetime.now())
+        if famille:
+            context['liste_messages'] = PortailMessage.objects.select_related("famille", "utilisateur").filter(
+                famille=famille, structure_id=self.get_idstructure()
+            ).order_by("date_creation")
+
+            # Importation des messages non lus
+            liste_messages_non_lus = PortailMessage.objects.select_related("famille").filter(
+                famille=famille, structure_id=self.get_idstructure(), utilisateur__isnull=False, date_lecture__isnull=True
+            )
+            context['liste_messages_non_lus'] = list(liste_messages_non_lus)
+
+            # Enregistre la date de lecture pour les messages non lus
+            liste_messages_non_lus.update(date_lecture=datetime.datetime.now())
+
         return context
 
     def get_form_kwargs(self, **kwargs):
@@ -67,25 +89,39 @@ class Ajouter(Page, crud.Ajouter):
             structure = Structure.objects.get(pk=self.get_idstructure())
             if not structure.adresse_exp:
                 return
-            url_message = self.request.build_absolute_uri(reverse_lazy("messagerie_portail", kwargs={"idstructure": structure.pk, "idfamille": self.request.user.famille.pk}))
 
-            # Création du contenu du mail
+            # Récupérer la famille de l'utilisateur (famille ou individu)
+            famille = self.get_famille_object()
+            if not famille:
+                logger.error("Erreur : Famille non trouvée pour l'utilisateur.")
+                return
+
+            # Création de l'URL du message
+            url_message = self.request.build_absolute_uri(
+                reverse_lazy("messagerie_portail", kwargs={"idstructure": structure.pk, "idfamille": famille.pk})
+            )
+
+            # Création du contenu de l'email
             contenu_message = """
             <p>Bonjour,</p>
             <p>Vous avez reçu un nouveau message de <b>%s</b> sur le portail.</p>
             <p>Vous pouvez le consulter et y répondre en cliquant sur le lien suivant : <a href="%s" target="_blank">Accéder au message</a>.</p>
             <p>L'administrateur du portail</p>
-            """ % (self.request.user.famille, url_message)
+            """ % (famille, url_message)
 
-            # Création de l'email
-            mail = Mail.objects.create(categorie="saisie_libre",
+            # Création et envoi de l'email
+            mail = Mail.objects.create(
+                categorie="saisie_libre",
                 objet="Nouveau message sur le portail",
                 html=contenu_message,
                 adresse_exp=structure.adresse_exp,
                 utilisateur=self.request.user if self.request else None,
             )
-            destinataire = Destinataire.objects.create(categorie="saisie_libre", adresse=structure.adresse_exp.adresse)
+            destinataire = Destinataire.objects.create(
+                categorie="saisie_libre", adresse=structure.adresse_exp.adresse)
             mail.destinataires.add(destinataire)
-            succes = utils_email.Envoyer_model_mail(idmail=mail.pk, request=self.request)
+            utils_email.Envoyer_model_mail(idmail=mail.pk, request=self.request)
         except Exception as err:
-            logger.error("Erreur dans l'envoi de la notification de message par email à l'amdinistrateur : %s" % err)
+            logger.error(f"Erreur dans l'envoi de la notification de message par email à l'administrateur : {err}")
+
+
