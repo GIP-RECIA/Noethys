@@ -58,10 +58,14 @@
 
                         {% else %}
 
-                            {# Si c'est un message de la famille #}
                             <div class="direct-chat-msg">
                                 <div class="direct-chat-infos clearfix">
-                                    <span class="direct-chat-name float-left">{{ message.famille }}</span>
+                                    {# Si c'est un message de la famille #}
+                                    {% if request.user.famille %}
+                                        <span class="direct-chat-name float-left">{{ request.user.famille }}</span>
+                                    {% else %}
+                                        <span class="direct-chat-name float-left">{{ request.user.individu }}</span>
+                                    {% endif %}
                                     <span class="direct-chat-timestamp float-right">{{ message.date_creation|date:"l j F Y H:i" }}</span>
                                 </div>
                                 <img class="direct-chat-img" src="{% static "images/user.png" %}">
