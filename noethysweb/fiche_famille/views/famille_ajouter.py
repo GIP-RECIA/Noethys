@@ -19,6 +19,7 @@ from fiche_famille.views.famille import Onglet
 from fiche_famille.utils import utils_internet
 
 
+
 def Get_individus_existants(request):
     nom = request.POST.get("nom", "")
     prenom = request.POST.get("prenom", "")
@@ -132,6 +133,26 @@ class Ajouter(crud.Ajouter):
                         self.object.Maj_infos()
                         break
 
+            #  Fournir un identifiant et un mot de passe à l'individu créé lors de la création d'une famille.
+            individu = Individu.objects.get(pk=self.object.idindividu)
+            internet_identifiant_individu = utils_internet.CreationIdentifiantIndividu(IDindividu=individu.pk)
+            internet_mdp_individu, date_expiration_mdp_individu = utils_internet.CreationMDP()
+            individu.internet_identifiant = internet_identifiant_individu
+            individu.internet_mdp = internet_mdp_individu
+
+            # Vous pouvez aussi créer un utilisateur pour l'individu si nécessaire
+            utilisateur_individu = Utilisateur(
+                username=internet_identifiant_individu,
+                categorie="individu",  # Ou une autre catégorie, selon votre besoin
+                force_reset_password=True,
+                date_expiration_mdp=date_expiration_mdp_individu
+            )
+            utilisateur_individu.set_password(internet_mdp_individu)
+            utilisateur_individu.save()
+
+            # Association de l'utilisateur à l'individu
+            individu.utilisateur = utilisateur_individu
+            individu.save()
             # Renvoie vers la fiche individuelle
             url_success = reverse_lazy("individu_resume", kwargs={'idindividu': self.object.idindividu, 'idfamille': famille.pk})
 
@@ -145,7 +166,6 @@ class Ajouter(crud.Ajouter):
         # Sauvegarde du rattachement
         rattachement = Rattachement(famille=famille, individu=self.object, categorie=categorie, titulaire=titulaire)
         rattachement.save()
-
         # MAJ des infos de la famille
         famille.Maj_infos()
 
@@ -169,16 +189,12 @@ class Ajouter(crud.Ajouter):
 
         # Création de l'utilisateur
         utilisateur = Utilisateur(username=internet_identifiant, categorie="famille", force_reset_password=True, date_expiration_mdp=date_expiration_mdp)
-        utilisateur.save()
         utilisateur.set_password(internet_mdp)
         utilisateur.save()
-
         # Association de l'utilisateur à la famille
         famille.utilisateur = utilisateur
         famille.save()
-
         return famille
-
 
 class Ajouter_individu(Page, Ajouter):
     """ Ajouter un individu depuis la fiche famille """
