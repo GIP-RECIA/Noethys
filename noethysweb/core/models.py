@@ -1647,6 +1647,18 @@ class Remplissage(models.Model):
         return "Remplissage ID%d" % self.idremplissage if self.idremplissage else "Nouveau"
 
 
+class CategorieCompteInternet(models.Model):
+    idcategorie = models.AutoField(verbose_name="ID", db_column='IDcategorie', primary_key=True)
+    nom = models.CharField(verbose_name="Nom", max_length=200)
+
+    class Meta:
+        db_table = 'categories_compte_internet'
+        verbose_name = "catégorie de compte internet"
+        verbose_name_plural = "catégories de compte internet"
+
+    def __str__(self):
+        return self.nom
+
 
 class Individu(models.Model):
     idindividu = models.AutoField(verbose_name="ID", db_column='IDindividu', primary_key=True)
@@ -1693,6 +1705,34 @@ class Individu(models.Model):
     type_garde_choix = [(1, "Mère"), (2, "Père"), (3, "Garde alternée"), (4, "Autre personne")]
     type_garde = models.IntegerField(verbose_name=_("Type de garde"), choices=type_garde_choix, blank=True, null=True)
     info_garde = models.TextField(verbose_name=_("Information sur la garde"), blank=True, null=True)
+    # new attributs
+    internet_categorie = models.ForeignKey(CategorieCompteInternet, verbose_name="Catégorie",related_name="internet_categori", on_delete=models.PROTECT, blank=True,null=True)
+    internet_actif = models.BooleanField(verbose_name="Compte internet activé", default=True)
+    internet_identifiant = encrypt(models.CharField(verbose_name="Identifiant", max_length=200, blank=True, null=True))
+    internet_mdp = encrypt(models.CharField(verbose_name="Mot de passe", max_length=200, blank=True, null=True))
+    internet_secquest = models.CharField(verbose_name="Question", max_length=200, blank=True, null=True)
+    internet_reservations = models.BooleanField(verbose_name="Autoriser les réservations sur le portail", default=True)
+    # memo = models.TextField(verbose_name="Mémo", blank=True, null=True)
+    # email_factures = models.BooleanField(verbose_name="Activation de l'envoi des factures par Email", default=False)
+    # email_factures_adresses = models.CharField(verbose_name="Adresses pour l'envoi des factures par Email",max_length=400, blank=True, null=True)
+    # email_recus = models.BooleanField(verbose_name="Activation de l'envoi des reçus par Email", default=False)
+    # email_recus_adresses = models.CharField(verbose_name="Adresses pour l'envoi des reçus par Email", max_length=400,blank=True, null=True)
+    # idtiers_helios = models.CharField(verbose_name="Identifiant national", max_length=300, blank=True, null=True,help_text="Saisissez l'identifiant national (SIRET ou SIREN ou FINESS ou NIR)")
+    # natidtiers_helios = models.IntegerField(verbose_name="Type d'identifiant national", blank=True, null=True,choices=LISTE_TYPES_ID_TIERS, default=9999,help_text="Sélectionnez le type d'identifiant national du tiers pour Hélios (Trésor Public)")
+    # reftiers_helios = models.CharField(verbose_name="Référence locale", max_length=200, blank=True, null=True,help_text="Saisissez la référence locale du tiers")
+    # cattiers_helios = models.IntegerField(verbose_name="Catégorie de tiers", blank=True, null=True,choices=LISTE_CATEGORIES_TIERS, default=1,help_text="Sélectionnez la catégorie de tiers pour Hélios (Trésor Public)")
+    # natjur_helios = models.IntegerField(verbose_name="Nature juridique", blank=True, null=True, choices=LISTE_NATURES_JURIDIQUES, default=1,help_text="Sélectionnez la nature juridique du tiers pour Hélios (Trésor Public)")
+    # mail = encrypt(models.EmailField(verbose_name="Email favori", max_length=300, blank=True, null=True))
+    # mobile = encrypt(models.CharField(verbose_name="Portable favori", max_length=100, blank=True, null=True))
+    utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE, null=True)
+    certification_date = models.DateTimeField(verbose_name="Date de certification", blank=True, null=True)
+    # facturation_nom = models.CharField(verbose_name="Nom", max_length=300, blank=True, null=True)
+    # facturation_rue_resid = encrypt(models.CharField(verbose_name="Rue", max_length=200, blank=True, null=True))
+    # facturation_cp_resid = encrypt(models.CharField(verbose_name="Code postal", max_length=50, blank=True, null=True))
+    # facturation_ville_resid = encrypt(models.CharField(verbose_name="Ville", max_length=200, blank=True, null=True))
+    # email_blocage = models.BooleanField(verbose_name="La famille ne souhaite pas recevoir de mails groupés", default=False,help_text="L'éditeur d'emails groupés du menu Outils ne proposera pas cette famille dans les destinataires.")
+    # mobile_blocage = models.BooleanField(verbose_name="La famille ne souhaite pas recevoir de SMS groupés",default=False,help_text="L'éditeur de SMS groupés du menu Outils ne proposera pas cette famille dans les destinataires.")
+    blocage_impayes_off = models.BooleanField(verbose_name="Ne jamais appliquer le blocage des réservations si impayés",default=False,help_text="En cochant cette case, vous permettez à cette famille d'accéder aux réservations du portail même s'il y a des impayés et que le paramètre 'blocage si impayés' a été activé dans les paramètres généraux du portail.")
 
     class Meta:
         db_table = 'individus'
@@ -1765,6 +1805,9 @@ class Individu(models.Model):
             self.secteur = dict_adresse["secteur"]
             self.save()
 
+    def save_individu(sender, instance, **kwargs):
+        if hasattr(instance, 'individu'):
+            instance.individu.save()
 
 class Scolarite(models.Model):
     idscolarite = models.AutoField(verbose_name="ID", db_column='IDscolarite', primary_key=True)
@@ -1782,19 +1825,6 @@ class Scolarite(models.Model):
 
     def __str__(self):
         return "Etape de scolarité du %s au %s" % (self.date_debut.strftime('%d/%m/%Y'), self.date_fin.strftime('%d/%m/%Y'))
-
-
-class CategorieCompteInternet(models.Model):
-    idcategorie = models.AutoField(verbose_name="ID", db_column='IDcategorie', primary_key=True)
-    nom = models.CharField(verbose_name="Nom", max_length=200)
-
-    class Meta:
-        db_table = 'categories_compte_internet'
-        verbose_name = "catégorie de compte internet"
-        verbose_name_plural = "catégories de compte internet"
-
-    def __str__(self):
-        return self.nom
 
 
 class Famille(models.Model):
@@ -1904,18 +1934,25 @@ class Famille(models.Model):
 
         # Titulaire Hélios
         if maj_titulaire_helios:
-            if self.titulaire_helios:
-                # recherche si le titulaire est toujours dans la famille
-                found = False
-                for rattachement in rattachements:
-                    if rattachement.individu == self.titulaire_helios:
-                        found = True
-                if not found:
-                    self.titulaire_helios = None
-            if not self.titulaire_helios:
-                # Recherche un individu valide parmi les titulaires de la famille
-                if rattachements:
-                    self.titulaire_helios = rattachements.first().individu
+            try:
+                if self.titulaire_helios:
+                    # Recherche si le titulaire est toujours dans la famille
+                    found = False
+                    for rattachement in rattachements:
+                        if rattachement.individu == self.titulaire_helios:
+                            found = True
+                            break  # Si trouvé, on sort de la boucle
+                    if not found:
+                        # Si le titulaire n'est pas trouvé dans la famille, on le met à None
+                        self.titulaire_helios = None
+            except Individu.DoesNotExist:
+                # Si le titulaire a été supprimé, on le met à None
+                self.titulaire_helios = None
+
+            # Assurez-vous qu'il y a un titulaire dans la famille si nécessaire
+            if not self.titulaire_helios and rattachements.exists():
+                # Recherche un individu valide parmi les rattachements
+                self.titulaire_helios = rattachements.first().individu
 
         if maj_tiers_solidaire:
             if self.tiers_solidaire:
@@ -1946,6 +1983,11 @@ class Famille(models.Model):
 
     def Get_rue_resid(self):
         return self.rue_resid.replace("\n", "<br/>") if self.rue_resid else None
+
+    def Get_nom(self):
+        texte = ""
+        texte = self.nom
+        return texte
 
     def Get_infos(self, avec_civilite=False):
         """ Renvoie le nom des titulaires """
@@ -3122,15 +3164,33 @@ class PortailPeriode(models.Model):
         """ Vérifie si la période est active ce jour """
         return self.affichage == "TOUJOURS" or (datetime.datetime.now() >= self.affichage_date_debut and datetime.datetime.now() <= self.affichage_date_fin)
 
-    def Is_famille_authorized(self, famille=None):
+    def Is_famille_authorized(self, famille=None, individu=None):
         """ Vérifie si une famille est autorisée à accéder à cette période """
         # Vérification du compte internet
-        if (self.types_categories == "AUCUNE" and famille.internet_categorie) or (self.types_categories == "SELECTION" and famille.internet_categorie not in self.categories.all()):
+        if (self.types_categories == "AUCUNE" and famille.internet_categorie) or (
+                self.types_categories == "SELECTION" and famille.internet_categorie not in self.categories.all()):
             return False
         # Vérification de la ville de résidence
         if self.types_villes != "TOUTES" and self.villes:
             liste_villes = [ville.strip().upper() for ville in self.villes.split(",")]
-            if not famille.ville_resid or (self.types_villes == "SELECTION" and famille.ville_resid.upper() not in liste_villes) or (self.types_villes == "SELECTION_INVERSE" and famille.ville_resid.upper() in liste_villes):
+            if not famille.ville_resid or (
+                    self.types_villes == "SELECTION" and famille.ville_resid.upper() not in liste_villes) or (
+                    self.types_villes == "SELECTION_INVERSE" and famille.ville_resid.upper() in liste_villes):
+                return False
+        return True
+
+    def Is_individu_authorized(self, individu=None):
+        """ Vérifie si un individu est autorisée à accéder à cette période """
+        # Vérification du compte internet
+        if (self.types_categories == "AUCUNE" and individu.internet_categorie) or (
+                self.types_categories == "SELECTION" and individu.internet_categorie not in self.categories.all()):
+            return False
+        # Vérification de la ville de résidence
+        if self.types_villes != "TOUTES" and self.villes:
+            liste_villes = [ville.strip().upper() for ville in self.villes.split(",")]
+            if not individu.ville_resid or (
+                    self.types_villes == "SELECTION" and individu.ville_resid.upper() not in liste_villes) or (
+                    self.types_villes == "SELECTION_INVERSE" and individu.ville_resid.upper() in liste_villes):
                 return False
         return True
 
@@ -3428,6 +3488,7 @@ class PesPiece(models.Model):
 class Consentement(models.Model):
     idconsentement = models.AutoField(verbose_name="ID", db_column='IDconsentement', primary_key=True)
     famille = models.ForeignKey(Famille, verbose_name="Famille", on_delete=models.PROTECT, blank=True, null=True)
+    individu = models.ForeignKey(Individu, verbose_name="Individu", on_delete=models.PROTECT, blank=True, null=True)
     unite_consentement = models.ForeignKey(UniteConsentement, verbose_name="Unité de consentement", on_delete=models.PROTECT)
     horodatage = models.DateTimeField(verbose_name="Date", auto_now_add=True)
 

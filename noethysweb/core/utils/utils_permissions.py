@@ -8,7 +8,7 @@ from fiche_famille.utils.utils_famille import LISTE_ONGLETS as LISTE_ONGLETS_FAM
 from fiche_individu.utils.utils_individu import LISTE_ONGLETS as LISTE_ONGLETS_INDIVIDUS
 
 
-def GetPermissionsPossibles(organisateur=None):
+def GetPermissionsPossibles(organisateur=None, categorie=None):
     """ Liste des commandes pour créer les permissions des utilisateurs """
     liste_permissions = []
 
