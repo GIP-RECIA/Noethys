@@ -6,18 +6,58 @@
 import copy
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
+from core.models import Famille
+
+from core.models import Utilisateur
+
+from core.models import Rattachement
+
+from core.models import Individu
 
 
 def GetMenuPrincipal(parametres_portail=None, user=None):
-    menu = Menu(titre=_("Menu principal"), user=user)
 
+    menu = Menu(titre=_("Menu principal"), user=user)
     menu.Add(code="portail_accueil", titre=_("Accueil"), icone="home", toujours_afficher=True)
     menu.Add(code="portail_renseignements", titre=_("Renseignements"), icone="folder-open-o", toujours_afficher=parametres_portail.get("renseignements_afficher_page", False))
     menu.Add(code="portail_cotisations", titre=_("Adhésions"), icone="folder-o", toujours_afficher=parametres_portail.get("cotisations_afficher_page", False))
     menu.Add(code="portail_activites", titre=_("Activités"), icone="star-o", toujours_afficher=parametres_portail.get("activites_afficher_page", False))
     menu.Add(code="portail_reservations", titre=_("Réservations"), icone="calendar", toujours_afficher=parametres_portail.get("reservations_afficher_page", False))
     menu.Add(code="portail_documents", titre=_("Documents"), icone="file-text-o", toujours_afficher=parametres_portail.get("documents_afficher_page", False))
-    menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=parametres_portail.get("facturation_afficher_page", False))
+
+    # Récupérer l'individu correspondant à l'utilisateur
+    individu = Individu.objects.filter(utilisateur=user).first()
+
+    if individu:
+        # Chercher tous les rattachements pour l'individu
+        rattachements = Rattachement.objects.filter(individu=individu)
+
+        facturation_affichee = False  # Flag pour vérifier si la section facturation a été activée
+
+        if rattachements.exists():
+            # Boucle pour vérifier chaque famille liée à l'individu
+            for rattachement in rattachements:
+                famille = rattachement.famille  # Récupérer la famille à partir du rattachement
+
+                if famille and not facturation_affichee:
+                    # Vérifiez si l'individu est le contact_facturation de cette famille
+                    if famille.contact_facturation and famille.contact_facturation.idindividu == individu.idindividu:
+                        # Si l'individu est le contact_facturation de la famille, afficher la section "Facturation"
+                        menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
+                                 toujours_afficher=parametres_portail.get("facturation_afficher_page", False))
+                        facturation_affichee = True  # Marquer que la facturation a été affichée pour cette famille
+                        break  # Sortir de la boucle une fois que la section a été affichée
+                    else:
+                        # Si l'individu n'est pas le contact_facturation de cette famille, ne pas afficher la section
+                        menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
+                                 toujours_afficher=False)
+        else:
+            # Si l'individu n'est rattaché à aucune famille, ne pas afficher la section "Facturation"
+            menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
+    else:
+        # Si l'individu n'existe pas, ne pas afficher la section "Facturation"
+        menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
+
     menu.Add(code="portail_reglements", titre=_("Règlements"), icone="money", toujours_afficher=parametres_portail.get("reglements_afficher_page", False))
     menu.Add(code="portail_contact", titre=_("Contact"), icone="comments", toujours_afficher=parametres_portail.get("contact_afficher_page", False))
     menu.Add(code="portail_mentions", titre=_("Mentions légales"), icone="info-circle", toujours_afficher=parametres_portail.get("mentions_afficher_page", False))

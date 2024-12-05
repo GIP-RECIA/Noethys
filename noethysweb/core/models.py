@@ -1842,6 +1842,8 @@ class Famille(models.Model):
     internet_categorie = models.ForeignKey(CategorieCompteInternet, verbose_name="Catégorie", related_name="internet_categorie", on_delete=models.PROTECT, blank=True, null=True)
     internet_reservations = models.BooleanField(verbose_name="Autoriser les réservations sur le portail", default=True)
     memo = models.TextField(verbose_name="Mémo", blank=True, null=True)
+    utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE, null=True)
+
     email_factures = models.BooleanField(verbose_name="Activation de l'envoi des factures par Email", default=False)
     email_factures_adresses = models.CharField(verbose_name="Adresses pour l'envoi des factures par Email", max_length=400, blank=True, null=True)
     email_recus = models.BooleanField(verbose_name="Activation de l'envoi des reçus par Email", default=False)
@@ -1875,7 +1877,7 @@ class Famille(models.Model):
     mobile_blocage = models.BooleanField(verbose_name="La famille ne souhaite pas recevoir de SMS groupés", default=False, help_text="L'éditeur de SMS groupés du menu Outils ne proposera pas cette famille dans les destinataires.")
     individus_masques = models.ManyToManyField(Individu, verbose_name="Individus masqués", related_name="individus_masques", blank=True)
     blocage_impayes_off = models.BooleanField(verbose_name="Ne jamais appliquer le blocage des réservations si impayés", default=False, help_text="En cochant cette case, vous permettez à cette famille d'accéder aux réservations du portail même s'il y a des impayés et que le paramètre 'blocage si impayés' a été activé dans les paramètres généraux du portail.")
-
+    contact_facturation = models.ForeignKey(Individu, verbose_name="Contact facturation", related_name="contact_facturation", on_delete=models.SET_NULL, blank=True, null=True)
     class Meta:
         db_table = 'familles'
         verbose_name = "famille"
