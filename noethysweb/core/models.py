@@ -1842,6 +1842,8 @@ class Famille(models.Model):
     internet_categorie = models.ForeignKey(CategorieCompteInternet, verbose_name="Catégorie", related_name="internet_categorie", on_delete=models.PROTECT, blank=True, null=True)
     internet_reservations = models.BooleanField(verbose_name="Autoriser les réservations sur le portail", default=True)
     memo = models.TextField(verbose_name="Mémo", blank=True, null=True)
+    utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE, null=True)
+
     email_factures = models.BooleanField(verbose_name="Activation de l'envoi des factures par Email", default=False)
     email_factures_adresses = models.CharField(verbose_name="Adresses pour l'envoi des factures par Email", max_length=400, blank=True, null=True)
     email_recus = models.BooleanField(verbose_name="Activation de l'envoi des reçus par Email", default=False)
