@@ -75,9 +75,6 @@ class LoginViewGeneric(ClassCommuneLogin, LoginView):
                         portail=True
                 )
             elif  user.username.startswith("I"):
-                print('IIIIII')
-                print('user.individu.pk',user.individu.pk)
-
                 utils_historique.Ajouter(
                     titre="Connexion au portail individuel",
                     utilisateur=user,
