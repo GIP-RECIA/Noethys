@@ -27,8 +27,6 @@ class FormLogin(AuthenticationForm):
     def confirm_login_allowed(self, user):
         compte_famille = PortailParametre.objects.filter(code="compte_famille").first()
         compte_individu = PortailParametre.objects.filter(code="compte_individu").first()
-        logger.debug("compte_famille:  %s" % compte_famille.valeur)
-        logger.debug("compte_individu: %s" % compte_individu.valeur)
 
         if not user.is_active:
             raise ValidationError(_("Ce compte a été désactivé"), code='inactive')
