@@ -55,4 +55,5 @@ class View(CustomView, TemplateView):
                 liste_documents.append({"titre": unite_consentement.type_consentement.nom, "texte": "Version du %s" % utils_dates.ConvertDateToFR(unite_consentement.date_debut), "fichier": unite_consentement.document, "couleur_fond": "primary", "extension": unite_consentement.Get_extension()})
             context['liste_documents'] = liste_documents
 
+
         return context
