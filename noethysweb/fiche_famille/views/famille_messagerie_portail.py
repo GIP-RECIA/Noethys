@@ -9,6 +9,9 @@ from fiche_famille.views.famille import Onglet
 from core.models import PortailMessage, Structure
 from outils.forms.messagerie_portail import Formulaire, Envoi_notification_message
 from django.db.models import Q, Count
+from core.models import Individu
+from core.models import Rattachement
+from core.models import Famille
 
 
 class Page(Onglet):
@@ -17,11 +20,16 @@ class Page(Onglet):
     def get_context_data(self, **kwargs):
         """ Context data spécial pour onglet """
         context = super(Page, self).get_context_data(**kwargs)
-        context['onglet_actif'] = "outils"
+        context['onglet_actif'] = "messagerie"
 
         # Importation de toutes les structures
         context['liste_structures'] = Structure.objects.filter(pk__in=self.request.user.structures.all()).order_by("nom")
 
+        # Importation de toutes les représentants
+        if self.Get_idfamille():
+            context['liste_representants'] = Individu.objects.filter(rattachement__famille_id=self.Get_idfamille(),rattachement__titulaire=True)
+
+        # context['famille'] = Famille.objects.get(pk=self.kwargs['idfamille'])
         # Importation du nombre de messages non lus (regroupement par structure)
         context['dict_messages_par_structure'] = {valeur["structure"]: valeur["nbre"] for valeur in PortailMessage.objects.values("structure").filter(famille_id=self.Get_idfamille()).annotate(nbre=Count('pk'))}
 
