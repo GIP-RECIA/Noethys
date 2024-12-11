@@ -63,9 +63,9 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'noethysB',
-        'USER': 'noethysB',
-        'PASSWORD': 'noethysB',
+        'NAME': 'noethysweb',
+        'USER': 'noethysweb',
+        'PASSWORD': 'noethysweb',
         'HOST': 'localhost',  # ou l'adresse IP de votre serveur MariaDB
         'PORT': '3306',       # le port par défaut de MariaDB
     }
