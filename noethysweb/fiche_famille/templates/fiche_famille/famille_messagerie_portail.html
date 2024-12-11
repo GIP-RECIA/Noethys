@@ -37,9 +37,30 @@
                         {% block box_conclusion %}{{ box_conclusion|safe }}{% endblock %}
                     {% endembed %}
                 {% endif %}
-
-                {# Discussion #}
                 {% if structure %}
+                    {# Liste des parents titulaires associés à la famille #}
+                    {% if liste_representants %}
+                        {% embed 'core/box.html' with box_titre=True %}
+                            {% block box_theme %}card-outline card-lightblue{% endblock %}
+                            {% block box_titre %}Selection de représentants de la famille{% endblock %}
+                            {% block box_contenu %}
+                                <a class="btn btn-app" href="{% url 'famille_messagerie_portail' idfamille=famille.idfamille idstructure=structure.pk %}">
+                                    <i class="fa fa-user"></i>Famille {{ famille }}
+                                </a>
+                                {% for individu in liste_representants %}
+                                    <a class="btn btn-app" href="{% url 'famille_messagerie_portail' idfamille=famille.idfamille idindividu=individu.idindividu idstructure=structure.pk %}">
+                                        <i class="fa fa-user"></i>{{ individu.nom }} {{ individu.prenom }}
+                                    </a>
+                                {% endfor %}
+                            {% endblock box_contenu %}
+                            {% block box_conclusion %}{{ box_conclusion|safe }}{% endblock %}
+                        {% endembed %}
+                    {% endif %}
+
+
+
+                    {# Discussion #}
+
                     {% embed 'core/box.html' with box_titre=True box_conclusion=True %}
                         {% block box_theme %}card-outline card-lightblue direct-chat direct-chat-primary{% endblock %}
                         {% block box_titre %}
@@ -104,7 +125,7 @@
                     <script>
                         {# Scroll jusqu'en bas de la liste des messages #}
                         $("#div_messages").scrollTop($("#div_messages").get(0).scrollHeight);
-                        
+
                         $(document).ready(function() {
                             $(".case_switch").on("change", function(e) {
                                 $.ajax({
