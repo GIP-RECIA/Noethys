@@ -43,6 +43,7 @@ class View(CustomView, TemplateView):
         context = super(View, self).get_context_data(**kwargs)
         context['page_titre'] = _("Réservations")
         familles = self.get_famille_object()
+        context['familles']=familles
 
         if familles:
             # Vérifie que la famille est autorisée à faire des réservations

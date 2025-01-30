@@ -456,11 +456,15 @@ class View(CustomView, TemplateView):
         context['page_titre'] = "Facturation"
         familles = self.get_famille_object()
         # Pass the families to the context
-        context['familles'] = familles
+        context['all_familles'] = familles
         individu = Individu.objects.filter(utilisateur=self.request.user).first()
+        print(individu)
+        context['user'] = individu
         familles_data=[]
         for famille in familles:
             if famille.contact_facturation and famille.contact_facturation.idindividu == individu.idindividu:
+                context['contact_facturation'] = famille.contact_facturation
+                print('contact_facturation',famille.contact_facturation)
                 prelevement_actif=[]
                 paiement_actif=[]
                 liste_paiements=[]
@@ -619,5 +623,36 @@ class View(CustomView, TemplateView):
                     'solde': solde,
                 })
         context['familles'] = familles_data
+
+
+        # if individu:
+        #     # Chercher tous les rattachements pour l'individu
+        #     rattachements = Rattachement.objects.filter(individu=individu)
+        #
+        #     facturation_affichee = False  # Flag pour vérifier si la section facturation a été activée
+        #
+        #     if rattachements.exists():
+        #         # Boucle pour vérifier chaque famille liée à l'individu
+        #         for rattachement in rattachements:
+        #             famille = rattachement.famille  # Récupérer la famille à partir du rattachement
+        #
+        #             if famille and not facturation_affichee:
+        #                 # Vérifiez si l'individu est le contact_facturation de cette famille
+        #                 if famille.contact_facturation and famille.contact_facturation.idindividu == individu.idindividu:
+        #                     # Si l'individu est le contact_facturation de la famille, afficher le contenu de la section "Facturation"
+        #
+        #
+        #                     facturation_affichee = True  # Marquer que la facturation a été affichée pour cette famille
+        #                     break  # Sortir de la boucle une fois que la section a été affichée
+        #                 else:
+        #                     # Si l'individu n'est pas le contact_facturation de cette famille, ne pas afficher la section
+        #                     menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
+        #                              toujours_afficher=False)
+        #     else:
+        #         # Si l'individu n'est rattaché à aucune famille, ne pas afficher la section "Facturation"
+        #         menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
+        # else:
+        #     # Si l'individu n'existe pas, ne pas afficher la section "Facturation"
+        #     menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
 
         return context
