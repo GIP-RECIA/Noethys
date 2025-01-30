@@ -351,7 +351,9 @@ class Ajouter(Page, crud.Ajouter):
                 adresse_exp=adresse_exp,  # Utilisation de l'instance AdresseMail
                 utilisateur=self.request.user if self.request else None,
             )
+            logger.debug(f"Mail créé : {mail}")
             # logger.debug(f"Mail créé : {mail}, Type : {type(mail)}")
+
 
             # Ajouter un destinataire au mail
             destinataire = Destinataire.objects.create(
