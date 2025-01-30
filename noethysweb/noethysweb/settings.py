@@ -193,7 +193,6 @@ LOCALE_PATHS = (
 # Static files (CSS, JavaScript, Images)
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-<<<<<<< HEAD
 # Stockage
 STORAGE_PROBLEME = "django.core.files.storage.FileSystemStorage"
 STORAGE_PIECE = "django.core.files.storage.FileSystemStorage"
@@ -201,8 +200,6 @@ STORAGE_QUOTIENT = "django.core.files.storage.FileSystemStorage"
 STORAGE_ASSURANCE = "django.core.files.storage.FileSystemStorage"
 STORAGE_PHOTO = "django.core.files.storage.FileSystemStorage"
 STORAGE_PIECE_COLLABORATEUR = "django.core.files.storage.FileSystemStorage"
-=======
->>>>>>> a65221ac (Initial commit for main version)
 
 # Media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
