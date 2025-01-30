@@ -74,7 +74,8 @@ class Accueil(CustomView, TemplateView):
 
             # Messages non lus
             messages_non_lus = len(
-                PortailMessage.objects.filter(famille=famille, utilisateur__isnull=False, date_lecture__isnull=True))
+                PortailMessage.objects.filter(famille=famille, utilisateur__isnull=False, date_lecture__isnull=True).exclude(
+            utilisateur=self.request.user))
             total_messages_non_lus += messages_non_lus
 
             # Approbations

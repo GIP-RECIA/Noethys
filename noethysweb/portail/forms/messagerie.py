@@ -32,6 +32,8 @@ class Formulaire(FormulaireBase, ModelForm):
 
     def __init__(self, *args, **kwargs):
         idstructure = kwargs.pop("idstructure", None)
+        idindividu = kwargs.pop("idindividu", None)
+
         super(Formulaire, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'portail_messages_form'

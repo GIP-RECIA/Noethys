@@ -22,20 +22,29 @@
     {% embed 'core/box.html' with box_titre=True box_introduction=True %}
         {% block box_theme %}card-outline card-lightblue{% endblock %}
         {% block box_titre %}Messagerie{% endblock %}
-        {% block box_introduction %}{% blocktrans %}Cliquez ci-dessous sur la structure ou le service avec lequel vous souhaitez converser{% endblocktrans %}.{% endblock %}
+        {% block box_introduction %}
+        {% if not liste_structures_messagerie %}
+                 {% blocktrans %}Aucune structure disponible{% endblocktrans %}.
+        {% else %}
+                {% blocktrans %}Cliquez ci-dessous sur la disccussion au lequel vous souhaitez participer{% endblocktrans %}.
+        {% endif %}
+        {% endblock %}
         {% block box_contenu %}
-            {% for structure in liste_structures_messagerie %}
+             {% for structure in liste_structures_messagerie %}
 
                 {% with dict_messages_non_lus|get_item:structure.pk as nbre_messages_non_lus %}
                 <a class="btn btn-app" href="{% url 'portail_messagerie' idstructure=structure.pk %}">
                     {% if nbre_messages_non_lus %}
-                        <span class="badge bg-danger">{{ nbre_messages_non_lus }} {% if nbre_messages_non_lus == 1 %}{% blocktrans %}non lu{% endblocktrans %}{% else %}{% blocktrans %}non lus{% endblocktrans %}{% endif %}</span>
+                        <span class="badge bg-danger">
+                            {{ nbre_messages_non_lus }} message{{ nbre_messages_non_lus|pluralize:"s" }} non lu{{ nbre_messages_non_lus|pluralize }}
+                        </span>
                     {% endif %}
                     <i class="fa fa-comments"></i>{{ structure.nom }}
                 </a>
                 {% endwith %}
 
             {% endfor %}
+
         {% endblock box_contenu %}
         {% block box_conclusion %}{{ box_conclusion|safe }}{% endblock %}
     {% endembed %}
