@@ -15,22 +15,26 @@
 
 {% block contenu_page %}
 
-    {# Texte d'introduction #}
-    {% if parametres_portail.facturation_intro %}
-        <div style="margin-bottom: 20px;">
-            <i class="fa fa-info-circle margin-r-5"></i>{{ parametres_portail.facturation_intro }}
-        </div>
-    {% endif %}
-{% for famille in familles %}
 
- <div class="card card-famille mb-4" style="background-color: #e6e6e6;">
 
-          <div class="card-header">
-              <h5 class="mb-0">{{famille.famille}}</h5> <!-- Afficher le nom de la famille -->
-          </div>
+{% for family in all_familles %}
+{# Block for each family #}
+{% embed 'core/box.html' with box_titre=True %}
+{% block box_theme %}card-outline card-lightblue custom-card{% endblock %}
+{% block box_titre %}{% blocktrans %} Famille: {{ family }} {% endblocktrans %}{% endblock %}
+{% block card_body_classe %}p-0{% endblock %}
+ {% block box_contenu %}
+    <div class="card-body" style="min-height: 0; margin-block: 5px; padding-block: 5px; margin-left: 10px; margin-right: 10px;">
+ {% if user == family.contact_facturation %}
+     {# Texte d'introduction #}
+        {% if parametres_portail.facturation_intro %}
+            <div style="margin-bottom: 20px;color: #127d08;">
+                <i class="fa fa-info-circle margin-r-5"></i>{{ parametres_portail.facturation_intro }}
+            </div>
+        {% endif %}
+    {% for famille in familles %}
 
-         <div class="card card-individu mb-4"  style="margin-inline: 0.5rem; padding:0.5rem; ">
-
+        {% if famille.famille == family %}
              {# Solde famille #}
 
             {% if parametres_portail.facturation_afficher_solde_famille %}
@@ -379,9 +383,18 @@
                     <div id="texte_detail_facture"></div>
                 {% endblock %}
             {% endembed %}
+
+            {% endif %}
+{% endfor %}
+        {% else %}
+                <div style="margin-bottom: 20px;color: #ff0000bd;">
+                <i class="fa fa-info-circle margin-r-5"> Vous ne pouvez pas consulter ici les données de facturation comme vous n'êtes pas contact de facturation.</i>
+            </div>
+{% endif %}
+{% endblock box_contenu %}
+{% endembed %}
     </div>
- </div>
- {% endfor %}
+{% endfor %}
 
     <script>
         $(document).ready(function() {
@@ -424,5 +437,4 @@
         });
     </script>
 
-{% endblock contenu_page %}s
-c
+{% endblock contenu_page %}
