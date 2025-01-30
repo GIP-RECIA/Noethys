@@ -22,3 +22,13 @@ LISTE_ONGLETS = [
     {"code": "outils", "label": "Outils", "icone": "fa-wrench", "url": "famille_outils"},
     {"code": "consommations", "label": "Consommations", "icone": "fa-calendar", "url": "famille_consommations"},
 ]
+def Get_filtered_onglets():
+    from core.utils.utils_parametres_generaux import Get_dict_parametres  # Déplacement ici
+    parametres = Get_dict_parametres()
+
+    # Filtrer la liste en fonction des paramètres
+    filtered_onglets = [
+        onglet for onglet in LISTE_ONGLETS
+        if parametres.get(f"{onglet['code']}_afficher_page_famille", True)
+    ]
+    return filtered_onglets

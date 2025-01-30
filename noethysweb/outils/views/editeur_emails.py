@@ -79,7 +79,7 @@ class Page(crud.Page):
     def get_context_data(self, **kwargs):
         context = super(Page, self).get_context_data(**kwargs)
         context['page_titre'] = "Editeur d'emails"
-        context['afficher_menu_brothers'] = True
+        # context['afficher_menu_brothers'] = True
         context['categories'] = {} if not self.Get_idmail() else {item["categorie"]: item["nbre"] for item in Destinataire.objects.values('categorie').filter(mail=self.Get_idmail()).annotate(nbre=Count("pk"))}
         mail = Mail.objects.get(pk=self.Get_idmail()) if self.Get_idmail() else None
         categorie = mail.categorie if mail else "saisie_libre"
@@ -91,7 +91,7 @@ class Page(crud.Page):
         destinataires, adresses_temp = [], []
         nbre_envois_attente, nbre_envois_reussis, nbre_envois_echec = 0, 0, 0
         if self.Get_idmail():
-            for destinataire in Destinataire.objects.select_related("famille", "individu", "contact", "collaborateur").prefetch_related("documents").filter(mail=self.Get_idmail()).order_by("adresse"):
+            for destinataire in Destinataire.objects.select_related("famille", "individu","inscription","contact", "collaborateur").prefetch_related("documents").filter(mail=self.Get_idmail()).order_by("adresse"):
                 if True:#destinataire.adresse not in adresses_temp:
                     destinataires.append(destinataire)
                     adresses_temp.append(destinataire.adresse)
@@ -170,6 +170,7 @@ class Page(crud.Page):
         action = request.POST.get("action")
         if action == "ajouter_familles": return HttpResponseRedirect(reverse_lazy("editeur_emails_familles", kwargs={"idmail": mail.pk}))
         if action == "ajouter_individus": return HttpResponseRedirect(reverse_lazy("editeur_emails_individus", kwargs={"idmail": mail.pk}))
+        if action == "ajouter_inscription": return HttpResponseRedirect(reverse_lazy("editeur_emails_inscriptions"))
         if action == "ajouter_collaborateurs": return HttpResponseRedirect(reverse_lazy("editeur_emails_collaborateurs", kwargs={"idmail": mail.pk}))
         if action == "ajouter_contacts": return HttpResponseRedirect(reverse_lazy("editeur_emails_contacts", kwargs={"idmail": mail.pk}))
         if action == "ajouter_diffusion": return HttpResponseRedirect(reverse_lazy("editeur_emails_listes_diffusion", kwargs={"idmail": mail.pk}))
