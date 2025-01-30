@@ -52,9 +52,9 @@ class View(Onglet, DetailView):
                     {"titre": "Envoyer un Email", "url": reverse_lazy("famille_emails_ajouter", kwargs={'idfamille': self.kwargs.get('idfamille', None)}), "icone": "file-text-o"},
                     {"titre": "Envoyer un SMS", "url": reverse_lazy("famille_sms_ajouter", kwargs={'idfamille': self.kwargs.get('idfamille', None)}), "icone": "file-text-o"},
                 ]},
-                {"titre": "Portail", "items": [
-                    {"titre": "Messagerie", "url": reverse_lazy("famille_messagerie_portail", kwargs={'idfamille': self.kwargs.get('idfamille', None)}), "icone": "file-text-o"},
-                ]},
+                # {"titre": "Portail", "items": [
+                #     {"titre": "Messagerie", "url": reverse_lazy("famille_messagerie_portail", kwargs={'idfamille': self.kwargs.get('idfamille', None)}), "icone": "file-text-o"},
+                # ]},
             ],
 
         ]

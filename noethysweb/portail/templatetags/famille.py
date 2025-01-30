@@ -3,6 +3,11 @@ from django import template
 register = template.Library()
 
 @register.simple_tag
+def dict_get_item(dictionary, key):
+    """Retrieve a value from a dictionary using a single key."""
+    return dictionary.get(key, 0)
+
+@register.simple_tag
 def dict_get_item_2d(dictionary, famille_id, structure_id):
     """
     Retourne dictionary[(famille_id, structure_id)] s'il existe, sinon 0 ou None

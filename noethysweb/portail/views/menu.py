@@ -6,13 +6,6 @@
 import copy
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from core.models import Famille
-
-from core.models import Utilisateur
-
-from core.models import Rattachement
-
-from core.models import Individu
 
 
 def GetMenuPrincipal(parametres_portail=None, user=None):
@@ -24,39 +17,39 @@ def GetMenuPrincipal(parametres_portail=None, user=None):
     menu.Add(code="portail_activites", titre=_("Activités"), icone="star-o", toujours_afficher=parametres_portail.get("activites_afficher_page", False))
     menu.Add(code="portail_reservations", titre=_("Réservations"), icone="calendar", toujours_afficher=parametres_portail.get("reservations_afficher_page", False))
     menu.Add(code="portail_documents", titre=_("Documents"), icone="file-text-o", toujours_afficher=parametres_portail.get("documents_afficher_page", False))
-
-    # Récupérer l'individu correspondant à l'utilisateur
-    individu = Individu.objects.filter(utilisateur=user).first()
-
-    if individu:
-        # Chercher tous les rattachements pour l'individu
-        rattachements = Rattachement.objects.filter(individu=individu)
-
-        facturation_affichee = False  # Flag pour vérifier si la section facturation a été activée
-
-        if rattachements.exists():
-            # Boucle pour vérifier chaque famille liée à l'individu
-            for rattachement in rattachements:
-                famille = rattachement.famille  # Récupérer la famille à partir du rattachement
-
-                if famille and not facturation_affichee:
-                    # Vérifiez si l'individu est le contact_facturation de cette famille
-                    if famille.contact_facturation and famille.contact_facturation.idindividu == individu.idindividu:
-                        # Si l'individu est le contact_facturation de la famille, afficher la section "Facturation"
-                        menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
-                                 toujours_afficher=parametres_portail.get("facturation_afficher_page", False))
-                        facturation_affichee = True  # Marquer que la facturation a été affichée pour cette famille
-                        break  # Sortir de la boucle une fois que la section a été affichée
-                    else:
-                        # Si l'individu n'est pas le contact_facturation de cette famille, ne pas afficher la section
-                        menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
-                                 toujours_afficher=False)
-        else:
-            # Si l'individu n'est rattaché à aucune famille, ne pas afficher la section "Facturation"
-            menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
-    else:
-        # Si l'individu n'existe pas, ne pas afficher la section "Facturation"
-        menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
+    menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=parametres_portail.get("facturation_afficher_page", False))
+    # # Récupérer l'individu correspondant à l'utilisateur
+    # individu = Individu.objects.filter(utilisateur=user).first()
+    #
+    # if individu:
+    #     # Chercher tous les rattachements pour l'individu
+    #     rattachements = Rattachement.objects.filter(individu=individu)
+    #
+    #     facturation_affichee = False  # Flag pour vérifier si la section facturation a été activée
+    #
+    #     if rattachements.exists():
+    #         # Boucle pour vérifier chaque famille liée à l'individu
+    #         for rattachement in rattachements:
+    #             famille = rattachement.famille  # Récupérer la famille à partir du rattachement
+    #
+    #             if famille and not facturation_affichee:
+    #                 # Vérifiez si l'individu est le contact_facturation de cette famille
+    #                 if famille.contact_facturation and famille.contact_facturation.idindividu == individu.idindividu:
+    #                     # Si l'individu est le contact_facturation de la famille, afficher la section "Facturation"
+    #                     menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
+    #                              toujours_afficher=parametres_portail.get("facturation_afficher_page", False))
+    #                     facturation_affichee = True  # Marquer que la facturation a été affichée pour cette famille
+    #                     break  # Sortir de la boucle une fois que la section a été affichée
+    #                 else:
+    #                     # Si l'individu n'est pas le contact_facturation de cette famille, ne pas afficher la section
+    #                     menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro",
+    #                              toujours_afficher=False)
+    #     else:
+    #         # Si l'individu n'est rattaché à aucune famille, ne pas afficher la section "Facturation"
+    #         menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
+    # else:
+    #     # Si l'individu n'existe pas, ne pas afficher la section "Facturation"
+    #     menu.Add(code="portail_facturation", titre=_("Facturation"), icone="euro", toujours_afficher=False)
 
     menu.Add(code="portail_reglements", titre=_("Règlements"), icone="money", toujours_afficher=parametres_portail.get("reglements_afficher_page", False))
     menu.Add(code="portail_contact", titre=_("Contact"), icone="comments", toujours_afficher=parametres_portail.get("contact_afficher_page", False))
@@ -87,9 +80,18 @@ class Menu():
         return self.parent
 
     def Add(self, code="", titre="", icone="", url=None, toujours_afficher=False, compatible_demo=True, args=None):
-        menu = Menu(self, code=code, titre=titre, icone=icone, url=url, args=args, user=self.user, compatible_demo=compatible_demo, toujours_afficher=toujours_afficher)
-        if not code or not self.user or toujours_afficher or code.endswith("_toc") or self.user.has_perm("core.%s" % code):
+        menu = Menu(self, code=code, titre=titre, icone=icone, url=url, args=args, user=self.user,
+                    compatible_demo=compatible_demo, toujours_afficher=toujours_afficher)
+
+        # Determine if the menu should be added
+        if toujours_afficher or (code and self.user and self.user.has_perm(f"core.{code}")):
             self.children.append(menu)
+        else:
+            # If the parent is not set to always display, log and skip adding
+            if self.parent and not self.parent.toujours_afficher:
+                print(f"Skipping menu {code}: parent 'toujours_afficher'={self.parent.toujours_afficher}")
+            return None
+
         return menu
 
     def GetUrl(self):
