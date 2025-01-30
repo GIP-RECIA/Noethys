@@ -74,9 +74,13 @@ class Accueil(CustomView, TemplateView):
 
             # Messages non lus
             messages_non_lus = len(
-                PortailMessage.objects.filter(famille=famille, utilisateur__isnull=False, date_lecture__isnull=True).exclude(
-            utilisateur=self.request.user))
-            total_messages_non_lus += messages_non_lus
+                PortailMessage.objects.filter(
+                    Q(famille__in=familles),
+                    Q(utilisateur__isnull=False),
+                    Q(date_lecture__isnull=True),
+                    Q(individu=self.request.user.individu) | Q(individu__isnull=True)
+                )
+                .exclude(utilisateur=self.request.user))
 
             # Approbations
             approbations_requises = utils_approbations.Get_approbations_requises(famille=famille)
@@ -144,7 +148,7 @@ class Accueil(CustomView, TemplateView):
         # Ajouter les totaux dans le contexte
         context['nbre_pieces_manquantes'] = total_pieces_manquantes
         context['nbre_informations_manquantes'] = total_informations_manquantes
-        context['nbre_messages_non_lus'] = total_messages_non_lus
+        context['nbre_messages_non_lus'] = messages_non_lus
         context['nbre_approbations_requises'] = total_approbations_requises
         context["nbre_vaccinations_manquantes"] = total_vaccinations_manquantes
         context["nbre_assurances_manquantes"] = total_assurances_manquantes
