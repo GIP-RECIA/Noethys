@@ -8,9 +8,29 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Hidden, Submit, HTML, Fieldset, Div, ButtonHolder
 from crispy_forms.bootstrap import Field, InlineRadios
 from core.utils.utils_commandes import Commandes
+from core.models import PortailParametre
+from core.utils.utils_parametres_generaux import LISTE_PARAMETRES
+
 
 LISTE_RUBRIQUES = [
-    ("Compte Utilisateurs", ["compte_famille", "compte_individu"]), ]
+    ("Compte Utilisateurs", ["compte_famille", "compte_individu"]),
+
+    ("Fiche Individu", ["questionnaire_afficher_page_individu" , "liens_afficher_page_individu", "regimes_alimentaires_afficher_page_individu",
+             "maladies_afficher_page_individu" ,"medical_afficher_page_individu" , "assurances_afficher_page_individu" , "contacts_afficher_page_individu" ,
+             "transports_afficher_page_individu" , "consommations_afficher_page_individu"]),
+
+    ("Fiche Famille", ["questionnaire_afficher_page_famille" , "pieces_afficher_page_famille" , "locations_afficher_page_famille" ,
+            "cotisations_afficher_page_famille" , "caisse_afficher_page_famille" , "aides_afficher_page_famille" , "quotients_afficher_page_famille" ,
+            "prestations_afficher_page_famille" , "factures_afficher_page_famille" , "reglements_afficher_page_famille" ,
+            "messagerie_afficher_page_famille" , "outils_afficher_page_famille" , "consommations_afficher_page_famille"]),
+
+    ("Portail Utilisateur", [
+        # "individu_afficher_page_portailuser,parametrage_afficher_page_portailuser,"
+        "outils_afficher_page_portailuser" ,"locations_afficher_page_portailuser" , "adhesions_afficher_page_portailuser" ,
+            "consommations_afficher_page" ,"factures_afficher_page_portailuser" , "reglements_afficher_page_portailuser"
+            , "comptabilite_afficher_page_portailuser" ,"collabotrateurs_afficher_page_portailuser" , "aides_afficher_page_portailuser"])
+
+]
 
 
 class Formulaire(FormulaireBase, forms.Form):
@@ -26,19 +46,39 @@ class Formulaire(FormulaireBase, forms.Form):
         # Initialisation du layout
         self.helper.layout = Layout()
         self.helper.layout.append(Commandes(annuler_url="{% url 'gerer_compte_utilisateurs' %}", ajouter=False))
+        #
+        # # Création des fields avec valeurs initiales basées sur les sessions
+        # compte_famille_active = kwargs.get('compte_famille_active', False)
+        # compte_individu_active = kwargs.get('compte_individu_active', False)
+        #
+        # # Initialize fields with default or session-based initial values
+        # for titre_rubrique, liste_parametres in LISTE_RUBRIQUES:
+        #     liste_fields = []
+        #     for code_parametre in liste_parametres:
+        #         self.fields[code_parametre] = forms.BooleanField(required=False,
+        #                                                          initial=kwargs.get(code_parametre, False))
+        #         liste_fields.append(Field(code_parametre))
+        #     self.helper.layout.append(Fieldset(titre_rubrique, *liste_fields))
+        #
+        # Importation des paramètres par défaut
 
-        # Création des fields avec valeurs initiales basées sur les sessions
-        compte_famille_active = kwargs.get('compte_famille_active', False)
-        compte_individu_active = kwargs.get('compte_individu_active', False)
 
-        # Initialize fields with default or session-based initial values
+        dict_parametres = {parametre.code: parametre for parametre in LISTE_PARAMETRES}
+        for parametre_db in PortailParametre.objects.all():
+            if parametre_db.code in dict_parametres:
+                dict_parametres[parametre_db.code].From_db(parametre_db.valeur)
+
+        # Création des fields
         for titre_rubrique, liste_parametres in LISTE_RUBRIQUES:
             liste_fields = []
             for code_parametre in liste_parametres:
-                self.fields[code_parametre] = forms.BooleanField(required=False,
-                                                                 initial=kwargs.get(code_parametre, False))
+                self.fields[code_parametre] = dict_parametres[code_parametre].Get_ctrl()
+                self.fields[code_parametre].initial = dict_parametres[code_parametre].valeur
                 liste_fields.append(Field(code_parametre))
             self.helper.layout.append(Fieldset(titre_rubrique, *liste_fields))
+
+        self.helper.layout.append(HTML("<br>"))
+
         self.helper.layout.append(HTML(EXTRA_SCRIPT))
 
     def clean(self):

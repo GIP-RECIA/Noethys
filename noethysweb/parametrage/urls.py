@@ -37,8 +37,11 @@ urlpatterns = [
     # Organisateur
     path('parametrage/organisateur/ajouter', organisateur.Ajouter.as_view(), name='organisateur_ajouter'),
     path('parametrage/organisateur/modifier/<int:pk>', organisateur.Modifier.as_view(), name='organisateur_modifier'),
+
     # Compte
     path('parametrage/compte/', gerer_compte_utilisateurs.Modifier.as_view(), name='gerer_compte_utilisateurs'),
+    path('parametrage/compte/', gerer_compte_utilisateurs.Modifier.as_view(), name='parametres_generaux'),
+
     # Structures
     path('parametrage/structures/liste', structures.Liste.as_view(), name='structures_liste'),
     path('parametrage/structures/ajouter', structures.Ajouter.as_view(), name='structures_ajouter'),
