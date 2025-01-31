@@ -16,9 +16,15 @@ from django.conf import settings
 from crispy_forms.utils import render_crispy_form
 from core.models import Ouverture, Remplissage, UniteRemplissage, Vacance, Unite, Consommation, MemoJournee, Evenement, Groupe, Ventilation, Famille, \
                         Tarif, CombiTarif, TarifLigne, Quotient, Prestation, Aide, Deduction, CombiAide, Individu, Activite, Scolarite, QuestionnaireReponse
-from core.utils import utils_dates, utils_decimal, utils_historique
+from core.utils import utils_dates, utils_decimal, utils_historique, utils_parametres
 from consommations.utils import utils_consommations
 from consommations.forms.grille_questionnaire import Formulaire as Formulaire_questionnaire
+
+
+def Memoriser_options(request):
+    parametres = {"afficher_quantites": request.POST.get("afficher_quantites", False) == "true"}
+    utils_parametres.Set_categorie(categorie="grille", utilisateur=request.user, parametres=parametres)
+    return JsonResponse({"succes": True})
 
 
 def Get_form_questionnaire(request):
@@ -90,7 +96,13 @@ def Maj_tarifs_fratries(activite=None, prestations=[], liste_IDprestation_exista
         # Recherche les fratries
         if liste_modifications:
             for famille_id, tarif_id, date in liste_modifications:
-                liste_prestations_fratrie = Prestation.objects.select_related("tarif", "tarif_ligne", "individu").filter(famille_id=famille_id, tarif_id=tarif_id, date=date).order_by("individu_id")
+                if settings.ATTRIBUTION_TARIF_FRATERIE_TARIF_IDENTIQUE:
+                    # Recherche s'il existe des prestations ayant le même IDtarif sur la même date
+                    condition = Q(famille_id=famille_id, tarif_id=tarif_id, date=date)
+                else:
+                    # Recherche s'il existe des prestations de la même activité sur la même date
+                    condition = Q(famille_id=famille_id, activite=activite, date=date)
+                liste_prestations_fratrie = Prestation.objects.select_related("tarif", "tarif_ligne", "individu").filter(condition).order_by("individu_id")
                 liste_prestations_fratrie = sorted(list(liste_prestations_fratrie), key=lambda prestation: (prestation.individu.date_naiss or datetime.date(1950, 1, 1), prestation.individu.pk), reverse=not settings.ATTRIBUTION_TARIF_FRATERIE_AINES)
                 for index, prestation in enumerate(liste_prestations_fratrie):
                     if "degr" in prestation.tarif.methode:

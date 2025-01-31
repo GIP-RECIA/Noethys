@@ -18,7 +18,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     menu.Add(code="accueil", titre="Accueil", icone="home", toujours_afficher=True)
 
     # ------------------------------------ Paramétrage ------------------------------------
-    menu_parametrage = menu.Add(code="parametrage_toc", titre="Paramétrage", icone="gear", toujours_afficher=True )
+    menu_parametrage = menu.Add(code="parametrage_toc", titre="Paramétrage", icone="gear")
 
     menu_structure = menu_parametrage.Add(titre="Généralités")
     if organisateur:
@@ -207,7 +207,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     menu_calendrier.Add(code="calendrier_annuel", titre="Calendrier annuel", icone="file-text-o")
 
     # Sauvegarde
-    menu_sauvegarde = menu_outils.Add(titre="Sauvegarde")
+    menu_sauvegarde = menu_outils.Add(titre="Sauvegardes")
     menu_sauvegarde.Add(code="sauvegarde_creer", titre="Créer une sauvegarde", icone="file-text-o", compatible_demo=False)
 
     # Restauration
@@ -242,6 +242,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     menu_gestion_individus.Add(code="individus_doublons_liste", titre="Liste des individus en doublon", icone="file-text-o")
     menu_gestion_individus.Add(code="individus_recherche_avancee", titre="Recherche avancée d'individus", icone="file-text-o")
     menu_gestion_individus.Add(code="effacer_familles", titre="Effacer des fiches familles", icone="file-text-o")
+    menu_gestion_individus.Add(code="importer_individus", titre="Importer des individus", icone="file-text-o")
 
     # Inscriptions
     menu_inscriptions = menu_individus.Add(titre="Inscriptions")
@@ -395,6 +396,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     menu_factures.Add(code="factures_impression", titre="Imprimer des factures", icone="file-text-o")
     menu_factures.Add(code="factures_email", titre="Envoyer des factures par Email", icone="file-text-o")
     menu_factures.Add(code="liste_factures", titre="Liste des factures", icone="file-text-o")
+    menu_factures.Add(code="liste_factures_detaillees", titre="Liste des factures détaillées", icone="file-text-o")
     menu_factures.Add(code="edition_recap_factures", titre="Edition du récapitulatif des factures", icone="file-text-o")
     menu_factures.Add(code="factures_modifier", titre="Modifier des factures par lot", icone="file-text-o")
 
@@ -559,7 +561,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
 
 
 class Menu():
-    def __init__(self, parent=None, code="", titre="", icone=None, url=None, user=None, toujours_afficher=False, compatible_demo=True, args=None):
+    def __init__(self, parent=None, code="", titre="", icone=None, url=None, user=None, toujours_afficher=False, compatible_demo=True, masquer=False, args=None):
         self.parent = parent
         self.code = code
         self.titre = titre
@@ -570,6 +572,7 @@ class Menu():
         self.user = user
         self.toujours_afficher = toujours_afficher
         self.compatible_demo = compatible_demo
+        self.masquer = masquer
 
     def __repr__(self):
         return "<Menu '%s'>" % self.titre
