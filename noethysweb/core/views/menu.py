@@ -18,7 +18,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     menu.Add(code="accueil", titre="Accueil", icone="home", toujours_afficher=True)
 
     # ------------------------------------ Paramétrage ------------------------------------
-    menu_parametrage = menu.Add(code="parametrage_toc", titre="Paramétrage", icone="gear")
+    menu_parametrage = menu.Add(code="parametrage_toc", titre="Paramétrage", icone="gear", toujours_afficher=True)
 
     menu_structure = menu_parametrage.Add(titre="Généralités")
     if organisateur:
