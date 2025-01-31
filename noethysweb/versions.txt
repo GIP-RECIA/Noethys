@@ -1,3 +1,55 @@
+Version 1.2.8.2 (27/01/2025) :
+
+- Ajout de l'affichage du HT et de la TVA dans la synthèse des prestations
+- Ajout de la colonne Total dans la liste des inscriptions à une activité
+- Ajout du calcul par fratrie si activité identique
+- Correction du nombre de familles dans les statistiques générales
+- Correction sur l'export Noethysweb Desk
+
+Version 1.2.8.1 (19/01/2025) :
+
+- Correction des settings
+
+Version 1.2.8.0 (19/01/2025) :
+
+- Ajout de la liste des factures détaillées dans le menu Facturation
+- Ajout de la modification par lot des pièces fournies
+- Ajout de la librairie py7zr
+- Ajout de la récupération des données avec Noethysweb Desk
+- Correction titre colonne dans les contacts de la fiche individuelle
+
+Version 1.2.7.9 (06/01/2025) :
+
+- Ajout de l'import d'individus depuis Excel
+- Ajout de la librairie Openpyxl
+- Correction sur le nouveau tri de la liste d'attente
+- Correction de l'affichage du consentement sans document associé
+- Adaptations pour Django 5
+
+Version 1.2.7.8 (22/12/2024) :
+
+- Ajout de la sélection des événements dans le filtre Inscrits/Présents
+- Ajout de l'affichage des quantités dans le cadre Facturation de la grille des consommations
+- Ajout de la liste détaillée des consommations dans le menu Outils de la fiche famille
+- Ajout d'une colonne masquée Quantité dans la liste des prestations
+- Correction de l'affichage d'un individu sans prénom dans l'impression des réservations
+- Adaptations pour Django 5
+
+Version 1.2.7.7 (18/12/2024) :
+
+- Ajout de l'affichage du mot de passe sur les pages de connexion
+- Ajout de Tout et Rien cocher dans les checkbox multiples
+- Correction de l'option Masquer les présents dans l'édition pdf des consommations
+- Correction du regroupement par QF dans la synthèse des consommations
+- Correction de la suppression d'un individu avec Django 4
+
+Version 1.2.7.6 (14/12/2024) :
+
+- Ajout de la modification de la date de saisie d'une consommation dans la liste d'attente
+- Ajout d'une colonne Date de fin dans les tarifs de l'activité
+- Ajout du champ Document dans les opérations de trésorerie
+- Ajout des infos responsables dans les colonnes personnalisées de la liste PDF des consommations
+
 Version 1.2.7.5 (09/12/2024) :
 
 - Ajout de la validation manuelle des réservations du portail

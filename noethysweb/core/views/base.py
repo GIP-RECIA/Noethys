@@ -11,8 +11,8 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.core.cache import cache
 from core.views.menu import GetMenuPrincipal
-from core.models import Organisateur, Consommation, PortailMessage, PortailRenseignement
-from core.utils import utils_parametres , utils_parametres_generaux
+from core.models import Organisateur, Parametre, Consommation, Utilisateur, PortailMessage, PortailRenseignement
+from core.utils import utils_parametres, utils_parametres_generaux
 from noethysweb.version import GetVersion
 from django.db.models import Q
 
