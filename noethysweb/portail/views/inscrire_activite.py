@@ -146,5 +146,4 @@ class Ajouter(Page, crud.Ajouter):
     template_name = "portail/edit.html"
 
     def Get_detail_historique(self, instance):
-        print("Get_detail_historique called")
         return "Famille=%s, Individu=%s" % (instance.famille, instance.individu)

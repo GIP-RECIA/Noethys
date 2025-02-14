@@ -1814,7 +1814,6 @@ class Individu(models.Model):
         if hasattr(instance, 'individu'):
             instance.individu.save()
 
-
 class Scolarite(models.Model):
     idscolarite = models.AutoField(verbose_name="ID", db_column='IDscolarite', primary_key=True)
     individu = models.ForeignKey(Individu, verbose_name="Individu", on_delete=models.CASCADE)
@@ -1944,18 +1943,25 @@ class Famille(models.Model):
 
         # Titulaire Hélios
         if maj_titulaire_helios:
-            if self.titulaire_helios:
-                # recherche si le titulaire est toujours dans la famille
-                found = False
-                for rattachement in rattachements:
-                    if rattachement.individu == self.titulaire_helios:
-                        found = True
-                if not found:
-                    self.titulaire_helios = None
-            if not self.titulaire_helios:
-                # Recherche un individu valide parmi les titulaires de la famille
-                if rattachements:
-                    self.titulaire_helios = rattachements.first().individu
+            try:
+                if self.titulaire_helios:
+                    # Recherche si le titulaire est toujours dans la famille
+                    found = False
+                    for rattachement in rattachements:
+                        if rattachement.individu == self.titulaire_helios:
+                            found = True
+                            break  # Si trouvé, on sort de la boucle
+                    if not found:
+                        # Si le titulaire n'est pas trouvé dans la famille, on le met à None
+                        self.titulaire_helios = None
+            except Individu.DoesNotExist:
+                # Si le titulaire a été supprimé, on le met à None
+                self.titulaire_helios = None
+
+            # Assurez-vous qu'il y a un titulaire dans la famille si nécessaire
+            if not self.titulaire_helios and rattachements.exists():
+                # Recherche un individu valide parmi les rattachements
+                self.titulaire_helios = rattachements.first().individu
 
         if maj_tiers_solidaire:
             if self.tiers_solidaire:
@@ -3088,6 +3094,8 @@ class Destinataire(models.Model):
     categorie = models.CharField(verbose_name="Catégorie", max_length=300, blank=True, null=True)
     individu = models.ForeignKey(Individu, verbose_name="Individu", blank=True, null=True, on_delete=models.CASCADE)
     famille = models.ForeignKey(Famille, verbose_name="Famille", blank=True, null=True, on_delete=models.CASCADE)
+    inscription = models.ForeignKey(Inscription, verbose_name="Inscription", blank=True, null=True, on_delete=models.CASCADE)
+    activites = models.ForeignKey(Activite, verbose_name="Activites", blank=True, null=True, on_delete=models.CASCADE)
     collaborateur = models.ForeignKey("Collaborateur", verbose_name="Collaborateur", blank=True, null=True, on_delete=models.CASCADE)
     contact = models.ForeignKey(Contact, verbose_name="Contact", blank=True, null=True, on_delete=models.CASCADE)
     liste_diffusion = models.ForeignKey(ListeDiffusion, verbose_name="Liste de diffusion", blank=True, null=True, on_delete=models.CASCADE)
@@ -3175,15 +3183,33 @@ class PortailPeriode(models.Model):
         """ Vérifie si la période est active ce jour """
         return self.affichage == "TOUJOURS" or (datetime.datetime.now() >= self.affichage_date_debut and datetime.datetime.now() <= self.affichage_date_fin)
 
-    def Is_famille_authorized(self, famille=None):
+    def Is_famille_authorized(self, famille=None, individu=None):
         """ Vérifie si une famille est autorisée à accéder à cette période """
         # Vérification du compte internet
-        if (self.types_categories == "AUCUNE" and famille.internet_categorie) or (self.types_categories == "SELECTION" and famille.internet_categorie not in self.categories.all()):
+        if (self.types_categories == "AUCUNE" and famille.internet_categorie) or (
+                self.types_categories == "SELECTION" and famille.internet_categorie not in self.categories.all()):
             return False
         # Vérification de la ville de résidence
         if self.types_villes != "TOUTES" and self.villes:
             liste_villes = [ville.strip().upper() for ville in self.villes.split(",")]
-            if not famille.ville_resid or (self.types_villes == "SELECTION" and famille.ville_resid.upper() not in liste_villes) or (self.types_villes == "SELECTION_INVERSE" and famille.ville_resid.upper() in liste_villes):
+            if not famille.ville_resid or (
+                    self.types_villes == "SELECTION" and famille.ville_resid.upper() not in liste_villes) or (
+                    self.types_villes == "SELECTION_INVERSE" and famille.ville_resid.upper() in liste_villes):
+                return False
+        return True
+
+    def Is_individu_authorized(self, individu=None):
+        """ Vérifie si un individu est autorisée à accéder à cette période """
+        # Vérification du compte internet
+        if (self.types_categories == "AUCUNE" and individu.internet_categorie) or (
+                self.types_categories == "SELECTION" and individu.internet_categorie not in self.categories.all()):
+            return False
+        # Vérification de la ville de résidence
+        if self.types_villes != "TOUTES" and self.villes:
+            liste_villes = [ville.strip().upper() for ville in self.villes.split(",")]
+            if not individu.ville_resid or (
+                    self.types_villes == "SELECTION" and individu.ville_resid.upper() not in liste_villes) or (
+                    self.types_villes == "SELECTION_INVERSE" and individu.ville_resid.upper() in liste_villes):
                 return False
         return True
 

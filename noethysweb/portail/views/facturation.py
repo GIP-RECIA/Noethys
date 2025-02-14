@@ -458,13 +458,12 @@ class View(CustomView, TemplateView):
         # Pass the families to the context
         context['all_familles'] = familles
         individu = Individu.objects.filter(utilisateur=self.request.user).first()
-        print(individu)
         context['user'] = individu
         familles_data=[]
         for famille in familles:
             if famille.contact_facturation and famille.contact_facturation.idindividu == individu.idindividu:
                 context['contact_facturation'] = famille.contact_facturation
-                print('contact_facturation',famille.contact_facturation)
+                print('le contact de facturation est : ',famille.contact_facturation)
                 prelevement_actif=[]
                 paiement_actif=[]
                 liste_paiements=[]
