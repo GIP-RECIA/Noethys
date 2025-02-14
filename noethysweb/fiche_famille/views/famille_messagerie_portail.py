@@ -252,7 +252,6 @@ class Page(Onglet):
         form_kwargs["idstructure"] = self.get_idstructure()
         form_kwargs["idfamille"] = self.Get_idfamille()
         idindividu = self.kwargs.get('idindividu', None)
-        print(f"Individu ID récupéré dans get_form_kwargs : {idindividu}")  # Vérifiez si l'ID est récupéré
         return form_kwargs
 
     def get_idstructure(self):

@@ -27,10 +27,6 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
         menu_structure.Add(code="organisateur_ajouter", titre="Organisateur", icone="file-text-o", compatible_demo=False)
     menu_structure.Add(code="structures_liste", titre="Structures", icone="file-text-o", compatible_demo=False)
     menu_structure.Add(code="parametres_generaux", titre="Paramètres généraux", icone="file-text-o")
-    #
-    # # Compte
-    # menu_compte = menu_parametrage.Add(titre="Compte")
-    # menu_compte.Add(code="gerer_compte_utilisateurs", titre="Gérer les comptes Utilisateurs", icone="file-text-o")
 
     # Activités
     menu_activites = menu_parametrage.Add(titre="Activités")
@@ -127,6 +123,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     menu_emails.Add(code="adresses_mail_liste", titre="Adresses d'expédition d'emails", icone="file-text-o", compatible_demo=False)
     menu_emails.Add(code="signatures_emails_liste", titre="Signatures d'emails", icone="file-text-o")
     menu_emails.Add(code="listes_diffusion_liste", titre="Listes de diffusion", icone="file-text-o")
+    menu_emails.Add(code="outils_parametres_generaux", titre="Paramètres généraux", icone="file-text-o")
 
     # SMS
     menu_sms = menu_parametrage.Add(titre="SMS")
@@ -182,7 +179,7 @@ def GetMenuPrincipal(parametres_generaux=None, organisateur=None, user=None):
     # Emails
     menu_emails = menu_outils.Add(titre="Emails")
     menu_emails.Add(code="contacts_liste", titre="Carnets d'adresses", icone="file-text-o")
-    menu_emails.Add(code="editeur_emails", titre="Editeur d'Emails", icone="file-text-o")
+    menu_emails.Add(code="editeur_emails", titre="Envoi des emails par lot", icone="file-text-o")
     menu_emails.Add(code="emails_liste", titre="Liste des Emails", icone="file-text-o")
 
     # SMS

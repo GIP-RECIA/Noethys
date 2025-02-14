@@ -123,7 +123,6 @@ class Formulaire(FormulaireBase, ModelForm):
         # Initialiser le champ famille avec '---------'
         familles = {(rattachement.famille_id, rattachement.famille.Get_nom()) for rattachement in rattachements}
         self.fields["famille"].choices = [('', '---------')] + list(familles)  # Ajouter '----' en premier choix
-        print('familles', familles)
 
         # Initialiser le champ individu avec '----'
         famille_ids = {rattachement.famille_id for rattachement in rattachements}
@@ -131,7 +130,6 @@ class Formulaire(FormulaireBase, ModelForm):
         self.fields["individu"].choices = [('', '---------')] + [
             (individu.idindividu, individu.Get_nom()) for individu in individus
         ]
-        print("individus:::", individus)
         self.fields["famille"].required = True
 
         self.fields["individu"].required = True
