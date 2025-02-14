@@ -25,6 +25,7 @@ def Impression_pdf(request):
     from fiche_individu.utils import utils_inscriptions
     inscription = utils_inscriptions.Inscriptions()
     resultat = inscription.Impression(liste_inscriptions=inscriptions_cochees, dict_options={}, mode_email=True)
+
     if not resultat:
         return JsonResponse({"success": False}, status=401)
 
@@ -45,9 +46,9 @@ def Impression_pdf(request):
     liste_anomalies = []
     for IDcotisation, donnees in resultat["noms_fichiers"].items():
         cotisation = Inscription.objects.select_related('famille').get(pk=IDcotisation)
+
         if cotisation.famille.mail:
-            destinataire = Destinataire.objects.create(categorie="famille", famille=cotisation.famille,
-                                                       adresse=cotisation.famille.mail)
+            destinataire = Destinataire.objects.create(categorie="famille", famille=cotisation.famille,adresse=cotisation.famille.mail)
             document_joint = DocumentJoint.objects.create(nom="Inscription", fichier=donnees["nom_fichier"])
             destinataire.documents.add(document_joint)
             mail.destinataires.add(destinataire)
@@ -80,8 +81,8 @@ class Liste(Page_destinataires, crud.Liste):
 
     def get_context_data(self, **kwargs):
         context = super(Liste, self).get_context_data(**kwargs)
-        context['page_titre'] = "Gestion des inscriptions"
-        context['box_titre'] = "Envoyer des inscriptions par Email"
+        context['page_titre'] = "Envoi des Inscriptions par Email"
+        context['box_titre'] = "Envoyer des Inscriptions par Email en lot"
         context['box_introduction'] = "Cochez des inscriptions puis cliquez sur le bouton Aperçu."
         context['onglet_actif'] = "inscriptions_email"
         context['active_checkbox'] = True
