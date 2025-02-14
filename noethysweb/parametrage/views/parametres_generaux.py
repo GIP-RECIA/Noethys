@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from core.views.base import CustomView
-from parametrage.forms.gerer_compte_utilisateurs import Formulaire
+from parametrage.forms.parametres_generaux import Formulaire
 import django.contrib.messages
 from core.models import PortailParametre
 
@@ -92,4 +92,4 @@ class Modifier(CustomView, TemplateView):
         cache.delete("parametres_portail")
 
         django.contrib.messages.success(request, 'Paramètres enregistrés')
-        return HttpResponseRedirect(reverse_lazy("gerer_compte_utilisateurs"))
+        return HttpResponseRedirect(reverse_lazy("parametres_generaux"))
