@@ -27,7 +27,7 @@ from parametrage.views import organisateur, structures, \
     types_qualifications_collaborateurs, types_pieces_collaborateurs, types_evenements_collaborateurs, types_postes_collaborateurs, \
     modeles_plannings_collaborateurs, groupes_collaborateurs, modeles_aides, transports, compagnies, lignes, lieux, arrets, modeles_impressions, \
     modeles_word, releves_bancaires, sondages, achats_categories, achats_fournisseurs, modeles_commandes, modeles_commandes_colonnes, \
-    activites_evenements_categories, activites_import_export, gerer_compte_utilisateurs
+    activites_evenements_categories, activites_import_export, parametres_generaux, outils_parametres_generaux
 
 urlpatterns = [
 
@@ -38,9 +38,8 @@ urlpatterns = [
     path('parametrage/organisateur/ajouter', organisateur.Ajouter.as_view(), name='organisateur_ajouter'),
     path('parametrage/organisateur/modifier/<int:pk>', organisateur.Modifier.as_view(), name='organisateur_modifier'),
 
-    # Compte
-    path('parametrage/compte/', gerer_compte_utilisateurs.Modifier.as_view(), name='gerer_compte_utilisateurs'),
-    path('parametrage/compte/', gerer_compte_utilisateurs.Modifier.as_view(), name='parametres_generaux'),
+    # Paramètres généraux
+    path('parametrage/parametres_generaux/', parametres_generaux.Modifier.as_view(), name='parametres_generaux'),
 
     # Structures
     path('parametrage/structures/liste', structures.Liste.as_view(), name='structures_liste'),
@@ -496,6 +495,9 @@ urlpatterns = [
     path('parametrage/adresses_mail/ajouter', adresses_mail.Ajouter.as_view(), name='adresses_mail_ajouter'),
     path('parametrage/adresses_mail/modifier/<int:pk>', adresses_mail.Modifier.as_view(), name='adresses_mail_modifier'),
     path('parametrage/adresses_mail/supprimer/<int:pk>', adresses_mail.Supprimer.as_view(), name='adresses_mail_supprimer'),
+
+    # Paramètres généraux emails
+    path('parametrage/adresses_mail/outils_parametres_generaux/', outils_parametres_generaux.Modifier.as_view(), name='outils_parametres_generaux'),
 
     # Signatures d'emails
     path('parametrage/signatures_emails/liste', signatures_emails.Liste.as_view(), name='signatures_emails_liste'),

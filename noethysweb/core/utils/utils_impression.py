@@ -186,6 +186,7 @@ class Impression():
     def __init__(self, titre="", dict_donnees={}, dict_options={}, IDmodele=None, taille_page=None, generation_auto=True, request=None):
         self.titre = titre
         self.IDmodele = IDmodele
+
         self.dict_options = dict_options
         self.taille_page = taille_page
         self.modele_doc = None
@@ -194,11 +195,12 @@ class Impression():
             self.Generation_document(dict_donnees=dict_donnees)
 
     def Generation_document(self, dict_donnees={}):
+
         self.dict_donnees = dict_donnees
         self.erreurs = []
-
         # Rajoute les mots-clés par défaut au dict_donnees
         motscles_defaut = Get_motscles_defaut(request=self.request)
+
         self.dict_donnees.update(motscles_defaut)
         for key, valeurs in self.dict_donnees.items():
             if isinstance(key, int):
