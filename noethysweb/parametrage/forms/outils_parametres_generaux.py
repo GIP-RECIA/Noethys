@@ -13,31 +13,15 @@ from core.utils.utils_parametres_generaux import LISTE_PARAMETRES
 
 
 LISTE_RUBRIQUES = [
-    ("Compte Utilisateurs", ["compte_famille", "compte_individu"]),
-
-    ("Fiche Individu", ["questionnaire_afficher_page_individu" , "liens_afficher_page_individu", "regimes_alimentaires_afficher_page_individu",
-             "maladies_afficher_page_individu" ,"medical_afficher_page_individu" , "assurances_afficher_page_individu" , "contacts_afficher_page_individu" ,
-             "transports_afficher_page_individu" , "consommations_afficher_page_individu"]),
-
-    ("Fiche Famille", ["questionnaire_afficher_page_famille" , "pieces_afficher_page_famille" , "locations_afficher_page_famille" ,
-            "cotisations_afficher_page_famille" , "caisse_afficher_page_famille" , "aides_afficher_page_famille" , "quotients_afficher_page_famille" ,
-            "prestations_afficher_page_famille" , "factures_afficher_page_famille" , "reglements_afficher_page_famille" ,
-            "messagerie_afficher_page_famille" , "outils_afficher_page_famille" , "consommations_afficher_page_famille"]),
-
-    ("Portail Utilisateur", [
-        # "individu_afficher_page_portailuser,parametrage_afficher_page_portailuser,"
-        "outils_afficher_page_portailuser" ,"locations_afficher_page_portailuser" , "adhesions_afficher_page_portailuser" ,
-            "consommations_afficher_page" ,"factures_afficher_page_portailuser" , "reglements_afficher_page_portailuser"
-            , "comptabilite_afficher_page_portailuser" ,"collabotrateurs_afficher_page_portailuser" , "aides_afficher_page_portailuser"])
-
+    ("Envoi emails par lots", ["emails_individus_afficher_page", "emails_familles_afficher_page", "emails_activites_afficher_page"
+        ,"emails_inscriptions_afficher_page","emails_collaborateurs_afficher_page","emails_liste_diffusion_afficher_page"]),
 ]
-
 
 class Formulaire(FormulaireBase, forms.Form):
     def __init__(self, *args, **kwargs):
         super(Formulaire, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = 'compte_parametres_form'
+        self.helper.form_id = 'emails_parametres_form'
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-2'
@@ -45,23 +29,7 @@ class Formulaire(FormulaireBase, forms.Form):
 
         # Initialisation du layout
         self.helper.layout = Layout()
-        self.helper.layout.append(Commandes(annuler_url="{% url 'gerer_compte_utilisateurs' %}", ajouter=False))
-        #
-        # # Création des fields avec valeurs initiales basées sur les sessions
-        # compte_famille_active = kwargs.get('compte_famille_active', False)
-        # compte_individu_active = kwargs.get('compte_individu_active', False)
-        #
-        # # Initialize fields with default or session-based initial values
-        # for titre_rubrique, liste_parametres in LISTE_RUBRIQUES:
-        #     liste_fields = []
-        #     for code_parametre in liste_parametres:
-        #         self.fields[code_parametre] = forms.BooleanField(required=False,
-        #                                                          initial=kwargs.get(code_parametre, False))
-        #         liste_fields.append(Field(code_parametre))
-        #     self.helper.layout.append(Fieldset(titre_rubrique, *liste_fields))
-        #
-        # Importation des paramètres par défaut
-
+        self.helper.layout.append(Commandes(annuler_url="{% url 'outils_parametres_generaux' %}", ajouter=False))
 
         dict_parametres = {parametre.code: parametre for parametre in LISTE_PARAMETRES}
         for parametre_db in PortailParametre.objects.all():
@@ -83,39 +51,16 @@ class Formulaire(FormulaireBase, forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        compte_individu = cleaned_data.get("compte_individu")
-        compte_famille = cleaned_data.get("compte_famille")
-        # Validation pour s'assurer qu'un seul champ est sélectionné
-        if compte_individu and compte_famille:
-            raise forms.ValidationError("Vous ne pouvez sélectionner qu'un seul compte à la fois.")
+        emails_activites = cleaned_data.get("emails_activites")
         return cleaned_data
 
 
 EXTRA_SCRIPT = """
 <script>
 window.onload = function() {
-    const checkboxIndividu = document.getElementById("id_compte_individu"); 
-    const checkboxFamille = document.getElementById("id_compte_famille");  
 
     console.log("Checkboxes trouvées avec succès"); // Vérifie si les cases à cocher sont trouvées
 
-    checkboxIndividu.addEventListener('change', function() {
-            if (this.checked) {
-                checkboxFamille.checked = false;
-                checkboxFamille.disabled = true;
-            } else {
-                checkboxFamille.disabled = false;
-            }
-        });
-
-    checkboxFamille.addEventListener('change', function() {
-            if (this.checked) {
-                checkboxIndividu.checked = false;
-                checkboxIndividu.disabled = true;
-            } else {
-                checkboxIndividu.disabled = false;
-            }
-        });
 };
 </script>
 <br>
