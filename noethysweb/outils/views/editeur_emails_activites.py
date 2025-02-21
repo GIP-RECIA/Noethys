@@ -146,9 +146,9 @@ class Liste(Page_destinataires, crud.Liste):
     def get_context_data(self, **kwargs):
 
         context = super(Liste, self).get_context_data(**kwargs)
-        context['page_titre'] = "Envoi des Activites par Email"
-        context['box_titre'] = "Envoyer des activites par Email en lot"
-        context['box_introduction'] = "Cochez des activites puis cliquez sur le bouton Aperçu."
+        context['page_titre'] = "Envoi des Inscrits aux Activites par Email"
+        context['box_titre'] = "Envoyer des Inscrits aux Activites par Email en lot"
+        context['box_introduction'] = "Cochez les activites puis cliquez sur le bouton Aperçu."
         context['onglet_actif'] = "activites_email"
         context['active_checkbox'] = True
         context['bouton_supprimer'] = False
