@@ -60,7 +60,7 @@
                                         <span class="badge bg-danger">
                                             {{ nbre_messages_non_lus }} non lus / {{ nbre_total }} messages
                                         </span>
-                                    {% else %}
+                                    {% elif nbre_total > 0 %}
                                         <!-- Badge bleu pour le nombre total de messages -->
                                         <span class="badge bg-info">
                                             {{ nbre_total }} message{{ nbre_total|pluralize }}
