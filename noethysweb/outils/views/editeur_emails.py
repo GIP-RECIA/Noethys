@@ -122,7 +122,7 @@ class Page(crud.Page):
 
     def get_context_data(self, **kwargs):
         context = super(Page, self).get_context_data(**kwargs)
-        context['page_titre'] = "Editeur d'emails par lot"
+        context['page_titre'] = "Envoi d'emails par lot"
 
         mail = None
         if self.Get_idmail():
