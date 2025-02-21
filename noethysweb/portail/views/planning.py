@@ -254,7 +254,7 @@ class View(CustomView, TemplateView):
                           "{INDIVIDU_NOM}": individu.nom, "{INDIVIDU_PRENOM}": individu.prenom, "{INDIVIDU_NOM_COMPLET}": individu.Get_nom()}
 
         # Création du destinataire
-        destinataire = Destinataire.objects.create(categorie="famille", famille=self.request.user.famille, adresse=self.request.user.famille.mail, valeurs=json.dumps(valeurs_fusion))
+        destinataire = Destinataire.objects.create(categorie="famille", famille=self.get_famille(), adresse=self.get_famille().mail, valeurs=json.dumps(valeurs_fusion))
         mail.destinataires.add(destinataire)
 
         # Envoi du mail
