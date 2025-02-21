@@ -296,14 +296,14 @@ class Supprimer_individu(Page, crud.Supprimer):
                     Consentement.objects.filter(famille=famille).delete()
                     Utilisateur.objects.filter(famille=famille).delete()
 
-                    # # Vérification avant suppression
-                    # liens_restants = self.verifier_liens_famille(famille.pk)
-                    # if liens_restants:
-                    #     logger.error(
-                    #         f"Échec de suppression de la famille {famille.pk}. Liens restants : {liens_restants}")
-                    #     messages.add_message(request, messages.ERROR,
-                    #                          f"La suppression de la famille est impossible car elle est toujours liée à : {liens_restants}")
-                    #     return HttpResponseRedirect(self.get_success_url(), status=303)
+                    # Vérification avant suppression
+                    liens_restants = self.verifier_liens_famille(famille.pk)
+                    if liens_restants:
+                        logger.error(
+                            f"Échec de suppression de la famille {famille.pk}. Liens restants : {liens_restants}")
+                        messages.add_message(request, messages.ERROR,
+                                             f"La suppression de la famille est impossible car elle est toujours liée à : {liens_restants}")
+                        return HttpResponseRedirect(self.get_success_url(), status=303)
 
                     # Suppression de la famille
                     famille.delete()
