@@ -33,8 +33,8 @@ class Parametre():
 LISTE_PARAMETRES = [
 
     # Compte utilisateurs
-    Parametre(code="compte_famille", label="Compte Famille", type="boolean", help_text="Cochez cette case pour se connecter sur le portail en tant que Famille."),
-    Parametre(code="compte_individu", label="Compte Individu", type="boolean", help_text="Cochez cette case pour se connecter sur le portail en tant que Individu."),
+    Parametre(code="compte_famille", label="Compte Famille", valeur=False, type="boolean", help_text="Cochez cette case pour se connecter sur le portail en tant que Famille."),
+    Parametre(code="compte_individu", label="Compte Individu",  valeur=True, type="boolean", help_text="Cochez cette case pour se connecter sur le portail en tant que Individu."),
 
     # Fiche Individu
     Parametre(code="questionnaire_afficher_page_individu", label="Afficher la page Questionnaire", type="boolean", valeur=True, help_text="Cochez cette case pour afficher la page Questionnaire sur la fiche Individu."),
@@ -63,8 +63,6 @@ LISTE_PARAMETRES = [
     Parametre(code="consommations_afficher_page_famille", label="Afficher la page Consommations", type="boolean", valeur=True, help_text="Cochez cette case pour afficher la page Consommations sur la fiche Famille."),
 
     # Portail Utilisateur
-    # Parametre(code="individu_afficher_page_portailuser", type="boolean", valeur=True),
-    # Parametre(code="parametrage_afficher_page_portailuser", type="boolean", valeur=True),
     Parametre(code="outils_afficher_page_portailuser", label="Afficher la page Outils", type="boolean", valeur=True, help_text="Cochez cette case pour afficher la page Outils sur le menu de Portail Utilisateur."),
     Parametre(code="locations_afficher_page_portailuser", label="Afficher la page Locations", type="boolean", valeur=True, help_text="Cochez cette case pour afficher la page Locations sur le menu de Portail Utilisateur."),
     Parametre(code="adhesions_afficher_page_portailuser", label="Afficher la page Adhésions", type="boolean", valeur=True, help_text="Cochez cette case pour afficher la page Adhésions sur le menu de Portail Utilisateur."),

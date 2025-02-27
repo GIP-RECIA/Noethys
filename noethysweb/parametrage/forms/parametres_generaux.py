@@ -25,7 +25,6 @@ LISTE_RUBRIQUES = [
             "messagerie_afficher_page_famille" , "outils_afficher_page_famille" , "consommations_afficher_page_famille"]),
 
     ("Portail Utilisateur", [
-        # "individu_afficher_page_portailuser,parametrage_afficher_page_portailuser,"
         "outils_afficher_page_portailuser" ,"locations_afficher_page_portailuser" , "adhesions_afficher_page_portailuser" ,
             "consommations_afficher_page" ,"factures_afficher_page_portailuser" , "reglements_afficher_page_portailuser"
             , "comptabilite_afficher_page_portailuser" ,"collabotrateurs_afficher_page_portailuser" , "aides_afficher_page_portailuser"])
@@ -46,22 +45,6 @@ class Formulaire(FormulaireBase, forms.Form):
         # Initialisation du layout
         self.helper.layout = Layout()
         self.helper.layout.append(Commandes(annuler_url="{% url 'parametres_generaux' %}", ajouter=False))
-        #
-        # # Création des fields avec valeurs initiales basées sur les sessions
-        # compte_famille_active = kwargs.get('compte_famille_active', False)
-        # compte_individu_active = kwargs.get('compte_individu_active', False)
-        #
-        # # Initialize fields with default or session-based initial values
-        # for titre_rubrique, liste_parametres in LISTE_RUBRIQUES:
-        #     liste_fields = []
-        #     for code_parametre in liste_parametres:
-        #         self.fields[code_parametre] = forms.BooleanField(required=False,
-        #                                                          initial=kwargs.get(code_parametre, False))
-        #         liste_fields.append(Field(code_parametre))
-        #     self.helper.layout.append(Fieldset(titre_rubrique, *liste_fields))
-        #
-        # Importation des paramètres par défaut
-
 
         dict_parametres = {parametre.code: parametre for parametre in LISTE_PARAMETRES}
         for parametre_db in PortailParametre.objects.all():
