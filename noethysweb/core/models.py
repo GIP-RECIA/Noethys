@@ -1728,7 +1728,7 @@ class Individu(models.Model):
     # cattiers_helios = models.IntegerField(verbose_name="Catégorie de tiers", blank=True, null=True,choices=LISTE_CATEGORIES_TIERS, default=1,help_text="Sélectionnez la catégorie de tiers pour Hélios (Trésor Public)")
     # natjur_helios = models.IntegerField(verbose_name="Nature juridique", blank=True, null=True, choices=LISTE_NATURES_JURIDIQUES, default=1,help_text="Sélectionnez la nature juridique du tiers pour Hélios (Trésor Public)")
     # mail = encrypt(models.EmailField(verbose_name="Email favori", max_length=300, blank=True, null=True))
-    # mobile = encrypt(models.CharField(verbose_name="Portable favori", max_length=100, blank=True, null=True))
+    mobile = encrypt(models.CharField(verbose_name="Portable favori", max_length=100, blank=True, null=True))
     utilisateur = models.OneToOneField(Utilisateur, on_delete=models.CASCADE, null=True)
     certification_date = models.DateTimeField(verbose_name="Date de certification", blank=True, null=True)
     # facturation_nom = models.CharField(verbose_name="Nom", max_length=300, blank=True, null=True)

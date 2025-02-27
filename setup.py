@@ -18,7 +18,7 @@ setup(
 		),
     include_package_data=True,
     license='GNU GPL3',
-    author='Ivan LUCAS',
+    author='Ivan LUCAS - GIP RECIA',
 )
 
 # Puis le retire pour éviter un bug avec PyCharm
